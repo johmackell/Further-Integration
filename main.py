@@ -14,11 +14,12 @@ class Integral(Scene):
     
     # Define functions
     def show_function_graph(self):
-        equation = MathTex(r"e^x = x^0 + x^1 + \frac{1}{2} x^2 + \frac{1}{6} x^3 + \cdots + \frac{1}{n!} x^n + \cdots")
+        equation = MathTex(r"\hat{f} (\xi)=\int_{-\infty}^{\infty}f(x)e^{-2\pi ix\xi}dx")
         equation.set_color_by_tex("x", YELLOW)
 
         blue_circle = Circle(color=BLUE, fill_opacity=0.5)
 
+        self.wait()
         self.add(equation)
         self.play(ReplacementTransform(equation, blue_circle, run_time=3))
         small_dot = Dot()
