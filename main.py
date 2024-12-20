@@ -19,8 +19,8 @@ class Integral(Scene):
 
         blue_circle = Circle(color=BLUE, fill_opacity=0.5)
 
-        self.wait()
         self.add(equation)
+        self.wait(duration=3)
         self.play(ReplacementTransform(equation, blue_circle, run_time=3))
         small_dot = Dot()
         small_dot.add_updater(lambda mob: mob.next_to(blue_circle, DOWN))
