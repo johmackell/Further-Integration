@@ -1,5 +1,6 @@
 from manim import *
-import numpy as np
+
+
 
 # Develop the graph and integration area under the curve
 class Integral(Scene):
@@ -14,13 +15,15 @@ class Integral(Scene):
     
     # Define functions
     def show_function_graph(self):
+        title = Text("Exploring the Fourier Transform")
+        title.to_edge(UP)
         equation = MathTex(r"\hat{f} (\xi)=\int_{-\infty}^{\infty}f(x)e^{-2\pi ix\xi}dx")
         equation.set_color_by_tex("x", YELLOW)
 
         blue_circle = Circle(color=BLUE, fill_opacity=0.5)
 
-        self.add(equation)
-        self.wait(duration=3)
+        self.play(Write(title))
+        self.play(Write(equation, run_time=3))
         self.play(ReplacementTransform(equation, blue_circle, run_time=3))
         small_dot = Dot()
         small_dot.add_updater(lambda mob: mob.next_to(blue_circle, DOWN))
