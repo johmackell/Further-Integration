@@ -3,7 +3,7 @@ from scipy.fft import fft, fftfreq
 import numpy as np
 
 # Number of sample points
-n = 1500
+n = 15000
 # Sample spacing
 # t = 1.0 / 2000.0
 max_x = 30

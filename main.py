@@ -1,3 +1,15 @@
+# How to render animation:
+#
+#   manim -pql main.py Integral
+#
+#   manim [options] FILE [class_name (to render)]
+#         -p, --preview
+#         -q, --quality [l|m|h|p|k] (use 'h' for final render, otherwise 'l')
+#
+#
+
+
+
 from manim import *
 
 FOURIER_TRANSFORM = r"F(\nu)=\int_{-\infty}^{\infty}f(t)e^{-2\pi it\nu} dt"
@@ -41,18 +53,29 @@ class Integral(Scene):
         #ax_labels=ax.get_axis_labels(x_label="Time (t)", y_label=Tex(r"y=sin(x)"))
         ax_labels=ax.get_axis_labels()
 
-        sin_graph=ax.plot_line_graph(lambda x: np.sin(2*x), color=DARK_BLUE)
+
+        e = ValueTracker(0.04)
+
+        sin_graph = always_redraw(
+            lambda: FunctionGraph(
+                lambda x: np.sin(2*x) + np.sin(5*x),
+                color=DARK_BLUE,
+                x_range = (-10, e.get_value()),
+            )
+        )
+
         
         sin_label=ax.get_graph_label(sin_graph, label="\\sin(x)", 
                                      x_val=-4.5, direction=UP*4)
 
-        ax_group=VGroup(ax, ax_labels)
+        ax_group = VGroup(ax, ax_labels)
         #labels=VGroup(sin_label, cos_label)
         
-        self.play(Create(ax_group), run_time=6)
+        self.play(Create(ax_group), Write(sin_label), run_time=3)
         self.wait()
-        self.play(Write(sin_label))
-        self.play(Create(sin_graph), run_time=2)
-        self.play(sin_graph.animate.shift(RIGHT))
+        #self.play(Create(sin_graph), run_time=2)
+        self.add(sin_graph)
+        self.play(e.animate.set_value(PI), run_time=5, rate_func=linear)
+        self.play(sin_graph.animate.shift(RIGHT), run_time=2)
         self.wait()
 
