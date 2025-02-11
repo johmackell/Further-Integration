@@ -56,9 +56,13 @@ class Integral(Scene):
 
         e = ValueTracker(0.04)
 
+
         sin_graph = always_redraw(
             lambda: FunctionGraph(
+
+                # Sin wave goes here
                 lambda x: np.sin(2*x) + np.sin(5*x),
+
                 color=DARK_BLUE,
                 x_range = (-10, e.get_value()),
             )
