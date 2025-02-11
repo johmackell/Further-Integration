@@ -5,6 +5,10 @@
 
  ### $` F(\nu)=\int_{-\infty}^{\infty}f(t)e^{-2\pi it\nu} dt `$
 
+
+*** Note, this is an outdated gif preview. The most recently rendered video can be found at:
+https://github.com/johmackell/Further-Integration/blob/main/media/videos/main/480p15/Integral.mp4
+        
 ![Alt Text](https://github.com/johmackell/Further-Integration/blob/main/src/integral.gif)
 ![Alt Text](https://github.com/johmackell/Further-Integration/blob/main/src/Figure_1.png)
 ![Alt Text](https://github.com/johmackell/Further-Integration/blob/main/src/Figure_2.png)
