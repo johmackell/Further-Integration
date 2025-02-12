@@ -12,10 +12,12 @@
 
 from manim import *
 
-FOURIER_TRANSFORM = r"F(\nu)=\int_{-\infty}^{\infty}f(t)e^{-2\pi it\nu} dt"
-INVERSE_FOURIER   = r"f(t)=\int_{-\infty}^{\infty}F(\nu)e^{2\pi it\nu} d\nu"
+FOURIER_TRANSFORM = r"F(\omega)=\int_{-\infty}^{\infty}f(t)e^{-i\omega t} dt"
+INVERSE_FOURIER   = r"f(t)=\int_{-\infty}^{\infty}F(\nu)e^{i\omega t} d\omega"
 
 C7_CHORD = lambda x: np.sin(262*x) + np.sin(330*x) + np.sin(392*x) + np.sin(494*x)
+FSM7_CHORD = lambda x: np.sin(370*x) + np.sin(466*x) + np.sin(554*x) + np.sin(698*x)
+C_NOISE = lambda x: np.sin(262*x) + np.sin(330*x) + np.sin(392*x) + np.sin(1100*x)
 
 # Develop the graph and integration area under the curve
 class Integral(Scene):
@@ -145,7 +147,7 @@ class SineWave(Scene):
         self.wait(2)
 
 
-
+### Done in high quality
 class DecomposingSound(Scene):
     def construct(self):
         self.initialise_objects()
@@ -159,6 +161,8 @@ class DecomposingSound(Scene):
         )
         big_text = Text("Cmaj7", font_size=42, color=YELLOW)
         big_text.move_to(DOWN*3)
+        big_signal = big_axes.plot(C7_CHORD, color=BLUE)
+
         small_axes = Axes(
             x_range=(0, 6, 1), y_range=(-4, 4, 2),
             x_length=10, y_length=1.5,
@@ -166,18 +170,34 @@ class DecomposingSound(Scene):
         )
         small_text = Text("Cmaj7", font_size=24, color=YELLOW)
         small_text.next_to(small_axes, RIGHT*5)
-
-        big_signal = big_axes.plot(C7_CHORD, color=BLUE)
         small_signal = small_axes.plot(C7_CHORD, color=BLUE)
 
         self.big_vert_line = Line(start=np.array([-6., -2., 0.]), end=np.array([-6., 2., 0.]), color=GOLD)
         self.small_vert_line = Line(start=np.array([-6., -0.5, 0.]), end=np.array([-6., 0.5, 0.]), color=GOLD)
 
+        ax1_t = Text("f(t)", font_size=42, color=YELLOW)
+        ax1_t.move_to(DOWN*3)
+        self.ax1 = VGroup(
+            Axes(x_range=(0, 6, 1), y_range=(-4, 4, 2), y_length=4, tips=False),
+            big_axes.plot(FSM7_CHORD, color=GREEN),
+            ax1_t,
+            Line(start=np.array([-6., -2., 0.]), end=np.array([-6., 2., 0.]), color=GOLD)
+        )
+
+        ax2_t = Text("f(t)", font_size=42, color=MAROON)
+        ax2_t.move_to(DOWN*3)
+        self.ax2 = VGroup(
+            Axes(x_range=(0, 6, 1), y_range=(-4, 4, 2), y_length=4, tips=False),
+            big_axes.plot(C_NOISE, color=MAROON),
+            ax2_t,
+            Line(start=np.array([-6., -2., 0.]), end=np.array([-6., 2., 0.]), color=GOLD)
+        )
+
 
 
         # ----- -----
         # Vgroup objects are generally formatted as follows:
-        #       [Axes, ParametricFunction, Text]
+        #       [Axes, ParametricFunction, Text, Line]
         #
         self.big_plot = VGroup(big_axes, big_signal, big_text)
         self.small_plot = VGroup(small_axes, small_signal, small_text)
@@ -187,7 +207,7 @@ class DecomposingSound(Scene):
             ('C4', 262, YELLOW),
             ('E4', 330, GREEN),
             ('G4', 392, RED),
-            ('B5', 494, GOLD)
+            ('B5', 494, PINK)
         ]
         offset = 1.5
         for i in range(len(self.notes)):
@@ -208,6 +228,8 @@ class DecomposingSound(Scene):
 
             self.notes[i] = vg
             offset += 1.5
+        print(f"\n\n===========\n{self.notes}\n\n================\n\n")
+
     
     def play_scene(self):
         self.wait()
@@ -225,25 +247,96 @@ class DecomposingSound(Scene):
 
         self.play(Create(self.notes[0][0]), Create(self.notes[1][0]), Create(self.notes[2][0]), Create(self.notes[3][0]), run_time=2)
 
-        self.play(Transform(self.small_plot[1].copy(), self.notes[0][1]))
+        self.play(ReplacementTransform(self.small_plot[1].copy(), self.notes[0][1]))
         self.play(FadeIn(self.notes[0][2]))
         self.play(self.notes[0][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
         self.play(FadeOut(self.notes[0][3]))
 
-        self.play(Transform(self.small_plot[1].copy(), self.notes[1][1]))
+        self.play(ReplacementTransform(self.small_plot[1].copy(), self.notes[1][1]))
         self.play(FadeIn(self.notes[1][2]))
         self.play(self.notes[1][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
         self.play(FadeOut(self.notes[1][3]))
 
-        self.play(Transform(self.small_plot[1].copy(), self.notes[2][1]))
+        self.play(ReplacementTransform(self.small_plot[1].copy(), self.notes[2][1]))
         self.play(FadeIn(self.notes[2][2]))
         self.play(self.notes[2][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
         self.play(FadeOut(self.notes[2][3]))
 
-        self.play(Transform(self.small_plot[1].copy(), self.notes[3][1]))
+        self.play(ReplacementTransform(self.small_plot[1].copy(), self.notes[3][1]))
         self.play(FadeIn(self.notes[3][2]))
         self.play(self.notes[3][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
         self.play(FadeOut(self.notes[3][3]))
+
+        self.wait(3)
+
+        sq = Square()
+        sq.shift(UP*20)
+        self.play(ReplacementTransform(self.big_plot, sq), ReplacementTransform(self.small_plot, sq), *[ReplacementTransform(i, sq) for i in self.notes])
+
+        self.play(Create(self.ax1[0]), run_time=2)
+        self.play(Create(self.ax1[1]), run_time=4)
+        self.play(FadeIn(self.ax1[2]), run_time=0.5)
+        self.play(self.ax1[3].animate.shift(RIGHT*12), run_time=2, rate_func=linear)
+        self.play(FadeOut(self.ax1[3]))
+        self.ax1[3].shift(LEFT*12)
         
+        self.wait(2)
+
+        self.play(ReplacementTransform(self.ax1[1], self.ax2[1]), ReplacementTransform(self.ax1[2], self.ax2[2]))
+        self.play(Create(self.ax1[1]), run_time=4)
+        self.play(FadeIn(self.ax1[2]), run_time=0.5)
+        self.play(self.ax1[3].animate.shift(RIGHT*12), run_time=2, rate_func=linear)
+        self.play(FadeOut(self.ax1[3]))
 
         self.wait(2)
+
+
+
+class IntroducingFT(Scene):
+    def construct(self):
+        self.initialise_objects()
+        self.play_scene()
+    
+    def initialise_objects(self):
+        self.t1 = MathTex(r"\left( \begin{array}{ccc} Time & \Longleftrightarrow & Frequency \\ f(t) &  & F(\omega) \end{array} \right)")
+        self.t1.set_color_by_tex("f", YELLOW)
+
+        self.tt = Text("Fourier Transform", color=RED, font_size=64)
+        self.t2 = MathTex(FOURIER_TRANSFORM)
+        self.t2.set_color_by_tex("f", YELLOW)
+
+        ax1 = Axes(
+            x_range=(0, 6, 2), y_range=(-2, 2, 2),
+            x_length=5, y_length=4,
+            tips=False
+        )
+        axs1 = ax1.plot(lambda x: np.sin(2*PI*x), color=RED)
+        self.vg1 = VGroup(ax1, axs1)
+        self.vg1.shift(LEFT*4)
+
+        ax2 = Axes(
+            x_range=(0, 6, 2), y_range=(-2, 2, 2),
+            x_length=5, y_length=4,
+            tips=False
+        )
+        axs2 = Arrow(start=np.array([0.7, -0.3, 0]), end=np.array([0.7, 2, 0]), color=RED, tip_shape=StealthTip)
+        self.vg2 = VGroup(ax2, axs2)
+        self.vg2.shift(RIGHT*4)
+
+    def play_scene(self):
+        self.wait()
+
+        self.play(FadeIn(self.t1))
+        self.wait()
+        self.play(FadeOut(self.t1))
+
+        self.play(Write(self.t2), run_time=2)
+        self.play(self.t2.animate.shift(UP*3))
+
+        self.play(Create(self.vg1[0]), Create(self.vg2[0]))
+        self.play(Create(self.vg1[1]), Create(self.vg2[1]))
+        
+
+        self.wait(42)
+
+
