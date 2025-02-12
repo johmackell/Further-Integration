@@ -146,40 +146,104 @@ class SineWave(Scene):
 
 
 
-class TestSineWave(Scene):
+class DecomposingSound(Scene):
     def construct(self):
-        self.show_graphs()
+        self.initialise_objects()
+        self.play_scene()
     
-    def show_graphs(self):
+    def initialise_objects(self):
         big_axes = Axes(
-            x_range=(0, 20, 1), y_range=(-4, 4, 1),
+            x_range=(0, 6, 1), y_range=(-4, 4, 2),
                                 y_length=4,
             tips=False
         )
         big_text = Text("Cmaj7", font_size=42, color=YELLOW)
         big_text.move_to(DOWN*3)
         small_axes = Axes(
-            x_range=(0, 20, 1), y_range=(-4, 4, 1),
+            x_range=(0, 6, 1), y_range=(-4, 4, 2),
             x_length=10, y_length=1.5,
             tips=False
         )
         small_text = Text("Cmaj7", font_size=24, color=YELLOW)
-        small_text.next_to(small_axes, RIGHT)
+        small_text.next_to(small_axes, RIGHT*5)
 
         big_signal = big_axes.plot(C7_CHORD, color=BLUE)
         small_signal = small_axes.plot(C7_CHORD, color=BLUE)
-        big_plot = VGroup(big_axes, big_signal, big_text)
-        small_plot = VGroup(small_axes, small_signal, small_text)
-        small_plot.move_to(LEFT*3)
 
-        self.play(Create(big_axes), run_time=2)
-        self.play(Create(big_signal), run_time=6)
-        self.play(FadeIn(big_text), run_time=0.5)
-        self.wait(3)
+        self.big_vert_line = Line(start=np.array([-6., -2., 0.]), end=np.array([-6., 2., 0.]), color=GOLD)
+        self.small_vert_line = Line(start=np.array([-6., -0.5, 0.]), end=np.array([-6., 0.5, 0.]), color=GOLD)
 
-        self.play(ReplacementTransform(big_plot, small_plot, run_time=3))
-        self.play(small_plot.animate.shift(UP*3))
-        #self.play(signal.animate.stretch_to_fit_height(4))
-        #self.play(y.animate.set_value(8))
+
+
+        # ----- -----
+        # Vgroup objects are generally formatted as follows:
+        #       [Axes, ParametricFunction, Text]
+        #
+        self.big_plot = VGroup(big_axes, big_signal, big_text)
+        self.small_plot = VGroup(small_axes, small_signal, small_text)
+        self.small_plot.shift(LEFT)
+
+        self.notes = [
+            ('C4', 262, YELLOW),
+            ('E4', 330, GREEN),
+            ('G4', 392, RED),
+            ('B5', 494, GOLD)
+        ]
+        offset = 1.5
+        for i in range(len(self.notes)):
+            t = self.notes[i]
+
+            ax = Axes(
+                x_range=(0, 6, 1), y_range=(-4, 4, 2),
+                x_length=10, y_length=1,
+                tips=False
+            )
+            ax.shift(LEFT)
+            tx = Text(f"{t[0]} - {t[1]} Hz", color=t[2], font_size=24)
+            tx.next_to(ax, RIGHT*4)
+            sg = ax.plot(lambda x: np.sin(t[1]*x), color=t[2])
+            ln = Line(start=np.array([-6., -0.5, 0.]), end=np.array([-6., 0.5, 0.]), color=GOLD)
+            vg = VGroup(ax, sg, tx, ln)
+            vg.shift(UP*(3-offset))
+
+            self.notes[i] = vg
+            offset += 1.5
+    
+    def play_scene(self):
+        self.wait()
+        
+        self.play(Create(self.big_plot[0]), run_time=2)
+        self.play(Create(self.big_plot[1]), run_time=6)
+        self.play(FadeIn(self.big_plot[2]), run_time=0.5)
+        self.play(self.big_vert_line.animate.shift(RIGHT*12), run_time=3, rate_func=linear)
+        self.wait(2)
+        self.play(FadeOut(self.big_vert_line))
+        self.play(ReplacementTransform(self.big_plot, self.small_plot, run_time=2))
+        self.play(self.small_plot.animate.shift(UP*3.2))
+
+
+
+        self.play(Create(self.notes[0][0]), Create(self.notes[1][0]), Create(self.notes[2][0]), Create(self.notes[3][0]), run_time=2)
+
+        self.play(Transform(self.small_plot[1].copy(), self.notes[0][1]))
+        self.play(FadeIn(self.notes[0][2]))
+        self.play(self.notes[0][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
+        self.play(FadeOut(self.notes[0][3]))
+
+        self.play(Transform(self.small_plot[1].copy(), self.notes[1][1]))
+        self.play(FadeIn(self.notes[1][2]))
+        self.play(self.notes[1][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
+        self.play(FadeOut(self.notes[1][3]))
+
+        self.play(Transform(self.small_plot[1].copy(), self.notes[2][1]))
+        self.play(FadeIn(self.notes[2][2]))
+        self.play(self.notes[2][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
+        self.play(FadeOut(self.notes[2][3]))
+
+        self.play(Transform(self.small_plot[1].copy(), self.notes[3][1]))
+        self.play(FadeIn(self.notes[3][2]))
+        self.play(self.notes[3][3].animate.shift(RIGHT*10), run_time=3, rate_func=linear)
+        self.play(FadeOut(self.notes[3][3]))
+        
 
         self.wait(2)
