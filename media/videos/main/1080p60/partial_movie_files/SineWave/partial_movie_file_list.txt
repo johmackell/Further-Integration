@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3529212410_1548009131_223132457.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_1017146011_1231867638.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_970260602_3529853138.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_3045895810_3246394057.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_244384158_3519539269.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_3626491695_1536891470.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_2128475615_1941209201.mp4'
+file 'file:C:/Users/joey/StayLazy/GitHub/Further-Integration/media/videos/main/1080p60/partial_movie_files/SineWave/3040924799_1141282389_3238504405.mp4'
