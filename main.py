@@ -147,6 +147,58 @@ class SineWave(Scene):
         self.wait(2)
 
 
+class HistoryOfIntegration(Scene):
+    def construct(self):
+        self.my_scene()
+    
+    def my_scene(self):
+        self.wait(2)
+        self.pol_v = ValueTracker(8)
+        pol5 = RegularPolygon(5, color=BLUE).scale(2)
+        pol5s = pol5.copy().set_fill(BLUE_C, 0.8).scale(0.8)
+        pol5t = Text("n = 5").next_to(pol5, DOWN)
+
+        pol6 = RegularPolygon(6, color=GREEN)
+        pol6s = pol6.copy().set_fill(GREEN_C, 0.8)
+        pol6s.scale(0.8)
+        pol6t = Text("n = 6").next_to(pol6, DOWN)
+
+        poln = always_redraw(lambda:
+            RegularPolygon(int(self.pol_v.get_value()), color=RED).shift(RIGHT*3)
+        )
+        polns = always_redraw(lambda:
+            RegularPolygon(int(self.pol_v.get_value()), color=RED).shift(RIGHT*3).scale(0.8).set_fill(RED_C, 0.8)
+        )
+        polnt = always_redraw(
+            lambda: Text(f"n = {int(self.pol_v.get_value())}").next_to(poln, DOWN)
+        )
+
+
+        cir5 = Circle(color=WHITE).scale(1.6).shift(DOWN*0.1)
+        cir6 = Circle(color=WHITE).scale(0.8)
+        cirn = Circle(color=WHITE).shift(RIGHT*3).scale(0.8)
+
+        self.pol_vg = VGroup(pol6, poln, pol6s, polns, cir6, cirn, pol6t, polnt)
+
+        self.play(FadeIn(cir5))
+        self.wait(3)
+        self.play(FadeIn(pol5), FadeIn(pol5t))
+        self.wait(3)
+        self.play(FadeIn(pol5s))
+        self.wait(10)
+        self.play(cir5.animate.shift(LEFT*3).scale(0.5).shift(UP*0.1), pol5.animate.shift(LEFT*3).scale(0.5), pol5s.animate.shift(LEFT*3).scale(0.5), pol5t.animate.shift(LEFT*3).shift(UP*0.8), rate_func=linear)
+
+        self.play(FadeIn(self.pol_vg))
+
+        self.play(self.pol_v.animate.set_value(20), run_time=5, rate_func=linear)
+
+        self.wait(5)
+        self.play(FadeOut(self.pol_vg, pol5, pol5s, pol5t, cir5))
+
+        #
+
+
+
 ### Done in high quality
 class DecomposingSound(Scene):
     def construct(self):
@@ -292,51 +344,82 @@ class DecomposingSound(Scene):
 
 
 
+
 class IntroducingFT(Scene):
     def construct(self):
         self.initialise_objects()
         self.play_scene()
     
     def initialise_objects(self):
-        self.t1 = MathTex(r"\left( \begin{array}{ccc} Time & \Longleftrightarrow & Frequency \\ f(t) &  & F(\omega) \end{array} \right)")
-        self.t1.set_color_by_tex("f", YELLOW)
+        self.tt = MathTex(r"\begin{array}{c} Time \\ f(t) \end{array}", color=YELLOW).shift(LEFT*3)
+        self.tar = MathTex(r"\Longleftrightarrow", color=YELLOW)
+        self.ft = MathTex(r"\begin{array}{c} Frequency \\ F(\omega) \end{array}", color=YELLOW).shift(RIGHT*3)
 
-        self.tt = Text("Fourier Transform", color=RED, font_size=64)
+        self.tft = Text("Fourier Transform", color=RED, font_size=64)
         self.t2 = MathTex(FOURIER_TRANSFORM)
         self.t2.set_color_by_tex("f", YELLOW)
 
         ax1 = Axes(
-            x_range=(0, 6, 2), y_range=(-2, 2, 2),
+            x_range=(0, 2, 1), y_range=(-2, 2, 2),
             x_length=5, y_length=4,
-            tips=False
+            tips=False,
+            x_axis_config={"include_numbers": True}
         )
-        axs1 = ax1.plot(lambda x: np.sin(2*PI*x), color=RED)
+        axs1 = ax1.plot(lambda x: np.sin(2*2*PI*x), color=RED)
         self.vg1 = VGroup(ax1, axs1)
         self.vg1.shift(LEFT*4)
 
         ax2 = Axes(
-            x_range=(0, 6, 2), y_range=(-2, 2, 2),
+            x_range=(0, 3, 1), y_range=(-2, 2, 2),
             x_length=5, y_length=4,
-            tips=False
+            tips=False,
+            x_axis_config={"include_numbers": True}
         )
-        axs2 = Arrow(start=np.array([0.7, -0.3, 0]), end=np.array([0.7, 2, 0]), color=RED, tip_shape=StealthTip)
+        axs2 = Arrow(start=np.array([0.835, -0.3, 0]), end=np.array([0.835, 2, 0]), color=RED, tip_shape=StealthTip)
         self.vg2 = VGroup(ax2, axs2)
         self.vg2.shift(RIGHT*4)
+        self.axs2l = MathTex("\\infty", color=RED).next_to(axs2, UP, buff=0.2)
 
     def play_scene(self):
         self.wait()
 
-        self.play(FadeIn(self.t1))
+        self.play(FadeIn(self.tt, self.ft, self.tar))
         self.wait()
-        self.play(FadeOut(self.t1))
+        self.play(self.tt.animate.shift(DL).shift(DOWN*2), self.ft.animate.shift(DR).shift(DOWN*2), self.tar.animate.shift(DOWN*3))
 
         self.play(Write(self.t2), run_time=2)
         self.play(self.t2.animate.shift(UP*3))
 
         self.play(Create(self.vg1[0]), Create(self.vg2[0]))
-        self.play(Create(self.vg1[1]), Create(self.vg2[1]))
-        
+        self.play(Create(self.vg1[1]), Create(self.vg2[1]), Write(self.axs2l))
 
-        self.wait(42)
+        self.wait(15)
+
+        ft_image = ImageMobject("src/td_to_fd.png")
+        self.play(FadeIn(ft_image))
+        self.wait(8)
+        self.remove(ft_image)
+        self.play(FadeOut(self.tt, self.ft, self.tar, self.t2, self.vg1, self.vg2, self.axs2l))
+
+        jf_image = ImageMobject("src/jf.png").shift(LEFT*5).scale(0.5)
+        self.play(FadeIn(jf_image))
+
+        self.wait(3)
+        self.vg1[0].shift(RIGHT*6).scale(1.5)
+        self.vg1[1].shift(RIGHT*6).scale(1.5)
+        self.play(Create(self.vg1[0]))
+        self.play(Create(self.vg1[1]))
+
+        self.wait(3)
+
+
+        dot1 = Dot(self.vg1[0].c2p(0.125, 1), color=BLUE)
+        dot1l = self.vg1[0].get_line_from_axis_to_point(0, self.vg1[0].c2p(0.125, 1))
+        dot2 = Dot(self.vg1[0].c2p(0.625, 1), color=BLUE)
+        dot2l = self.vg1[0].get_line_from_axis_to_point(0, self.vg1[0].c2p(0.625, 1))
+        self.play(Create(dot1), Create(dot1l))
+        self.play(Create(dot2), Create(dot2l))
+
+        self.wait(5)
 
 
