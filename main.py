@@ -149,6 +149,8 @@ class SineWave(Scene):
         self.wait(2)
 
 
+
+### Done in high quality
 class HistoryOfIntegration(Scene):
     def construct(self):
         self.wait(3)
@@ -364,7 +366,6 @@ class HistoryOfIntegration(Scene):
         self.wait(30)
         self.play(FadeOut(ft, vax, i, iab, at, bt))
         
-
 
 
 ### Done in high quality
@@ -761,3 +762,151 @@ class IntroducingFT(Scene):
 
 
 
+
+class ApplyingFT(Scene):
+    def construct(self):
+        self.wait(3)
+        self.play_scene()
+        self.wait(3)
+    
+    def play_scene(self):
+        t = Title("Applying the Fourier Transform", color=RED)
+        self.play(Write(t))
+        self.wait(3)
+
+        ft = MathTex(r"f(t)&=\cos{(5\pi t)}", color=YELLOW)
+        self.play(Write(ft))
+        self.play(ft.animate.shift(UP*3).shift(LEFT*3), FadeOut(t, shift=UP*2))
+        ftt = MathTex(FOURIER_TRANSFORM, color=BLUE)
+        fttr = SurroundingRectangle(ftt, color=YELLOW)
+        ftt = VGroup(ftt, fttr)
+        self.play(Write(ftt))
+        self.play(ftt.animate.shift(UP*3).shift(RIGHT*3))
+        fft = MathTex(
+            r"F(\omega)&= \int_{-\infty}^{\infty} \cos{(5\pi t)}e^{-i\omega t} dt \\",
+            r"&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt \\ \\",
+            r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt"
+        ).scale(0.7)
+        fft[2].set_color(YELLOW).set_z_index(2)
+        self.play(Write(fft[0]), run_time=2)
+        self.play(Write(fft[1]), run_time=2)
+        self.wait(1.5)
+        self.play(Write(fft[2]), run_time=2)
+        _rft = SurroundingRectangle(fft[2], color=RED, z_index=1)
+        _rfb = BackgroundRectangle(fft[2], fill_opacity=1, buff=0.1, z_index=1)
+        self.play(Create(_rft))
+        self.wait(5)
+        rft = VGroup(fft[2], _rft, _rfb)
+        self.play(rft.animate.shift(UP*4.5).shift(LEFT*2), FadeOut(ft, ftt, fft[0:2], shift=UP*2))
+
+        self.wait(5)
+
+        n = ValueTracker(1)
+        dn = r"2\pi"
+        a = "0"
+
+        #_nt = always_redraw(
+        #    lambda: MathTex(rf"\omega={dn}", color=RED).shift(RIGHT*3).shift(DOWN*3).#set_z_index(3)
+        #)
+        _nt = Variable(1, r"\omega", num_decimal_places=2).shift(RIGHT*3).shift(UP*3.5)
+        _nt_pi = always_redraw(
+            lambda: MathTex(f"{dn}", color=RED).set_z_index(3).move_to(_nt).shift(RIGHT*0.5)
+        )
+        _a = always_redraw(
+            lambda: MathTex(f"Area={a}", color=RED).set_z_index(3).shift(UP*3.5)
+        )
+        _nt.label.set_color(YELLOW)
+        _nt.value.set_color(RED)
+        nt_tracker = _nt.tracker
+        _ntb = BackgroundRectangle(_nt_pi, fill_opacity=1, buff=0.5, z_index=1)
+
+        _ax = NumberPlane(
+            (-3*PI, 3*PI, 1), (-1.5, 1.5, 0.25),
+            16, 8,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN)
+        xlabel = _ax.get_x_axis_label(
+            MathTex(r"\omega"),
+            direction=DOWN
+        )
+        ax_eq = always_redraw(
+            lambda: _ax.plot(lambda x: np.cos(5*x)*np.cos((n.get_value()/PI)*x))
+        )
+        ax_ar = always_redraw(
+            lambda: _ax.get_area(ax_eq, color=YELLOW_B)
+        )
+
+        ax = VGroup(_ax, xlabel)
+
+        self.play(Create(ax), Write(_nt), Write(_a), FadeIn(_rfb), run_time=2)
+        self.play(Create(ax_eq), run_time=2)
+        self.play(Write(ax_ar))
+
+        self.wait(5)
+
+        self.play(Uncreate(_nt_pi), run_time=0.0000001)
+        self.play(n.animate.set_value(2*PI), nt_tracker.animate.set_value(2*PI), run_time=5)
+        self.play(FadeIn(_nt_pi, _ntb))
+        self.wait(2)
+        self.play(FadeOut(_nt_pi, _ntb))
+        dn = r"3\pi"
+        self.play(Uncreate(_nt_pi), run_time=0.0000001)
+        self.play(n.animate.set_value(3*PI), nt_tracker.animate.set_value(3*PI), run_time=5)
+        self.play(FadeIn(_nt_pi, _ntb))
+        self.wait(2)
+        self.play(FadeOut(_nt_pi, _ntb))
+        dn = r"5\pi"
+        self.play(Uncreate(_nt_pi), run_time=0.0000001)
+        self.play(n.animate.set_value(5*PI), nt_tracker.animate.set_value(5*PI), run_time=5)
+        a = r"\infty"
+        self.play(FadeIn(_nt_pi, _ntb))
+        self.wait(10)
+        self.play(FadeOut(_nt_pi, _ntb))
+        dn = r"6\pi"
+        self.play(Uncreate(_nt_pi), run_time=0.0000001)
+        a = "0"
+        self.play(n.animate.set_value(6*PI), nt_tracker.animate.set_value(6*PI), run_time=2)
+        self.play(FadeIn(_nt_pi, _ntb))
+        
+        self.wait(5)
+        self.play(FadeOut(ax, _a, _nt, _rfb, ax_eq, ax_ar, _nt_pi, _ntb, _rft, fft[2]))
+
+        _fi = MathTex(r"F_{r}(\omega)&=i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt", color=YELLOW).scale(0.7)
+        fib = SurroundingRectangle(_fi, color=RED)
+        self.play(Write(_fi), Create(fib))
+        fi = VGroup(_fi, fib)
+        self.play(fi.animate.shift(UP*3.2).shift(LEFT*4))
+
+        n.set_value(1)
+        nt_tracker.set_value(1.00)
+
+        ax_eq = always_redraw(
+            lambda: _ax.plot(lambda x: np.cos(5*x)*np.sin((n.get_value()/PI)*x))
+        )
+        ax_ar = always_redraw(
+            lambda: _ax.get_area(ax_eq, color=YELLOW_B)
+        )
+        
+        self.play(Create(ax), Create(_nt), Write(_a), run_time=2)
+        self.play(Create(ax_eq), run_time=2)
+        self.play(Write(ax_ar))
+
+        self.wait(5)
+
+        self.play(n.animate.set_value(2*PI), nt_tracker.animate.set_value(2*PI), run_time=5)
+        self.play(n.animate.set_value(3*PI), nt_tracker.animate.set_value(3*PI), run_time=5)
+        self.play(n.animate.set_value(5*PI), nt_tracker.animate.set_value(5*PI), run_time=5)
+        self.wait(3)
+        self.play(n.animate.set_value(6*PI), nt_tracker.animate.set_value(6*PI), run_time=5)
+
+        self.wait(10)
+
+        fft = MathTex(
+            r"F(\omega)&= \int_{-\infty}^{\infty} \cos{(5\pi t)}e^{-i\omega t} dt \\",
+            r"&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt \\ \\",
+            r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt"
+        ).scale(0.7)
+
+        self.play(Write(fft), run_time=3)
