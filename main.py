@@ -151,13 +151,18 @@ class SineWave(Scene):
 
 class HistoryOfIntegration(Scene):
     def construct(self):
+        self.wait(3)
         self.my_scene()
+        self.wait(3)
     
     def my_scene(self):
-        self.wait(2)
+        arc = ImageMobject("src/archimedes.png").scale(0.5).shift(LEFT*4.5)
+        self.play(FadeIn(arc, shift=LEFT*3), run_time=2)
+        self.wait()
+
         self.pol_v = ValueTracker(8)
         pol5 = RegularPolygon(5, color=BLUE).scale(2)
-        pol5s = pol5.copy().set_fill(BLUE_C, 0.8).scale(0.8).shift(DOWN*0.1)
+        pol5s = pol5.copy().set_fill(BLUE_C, 0.8).scale(0.8).shift(DOWN*0.05)
         pol5t = Text("n = 5").next_to(pol5, DOWN)
 
         pol6 = RegularPolygon(6, color=GREEN)
@@ -188,7 +193,7 @@ class HistoryOfIntegration(Scene):
         self.wait(3)
         self.play(FadeIn(pol5s))
         self.wait(10)
-        self.play(cir5.animate.shift(LEFT*3).scale(0.5).shift(UP*0.1), pol5.animate.shift(LEFT*3).scale(0.5), pol5s.animate.shift(LEFT*3).scale(0.5), pol5t.animate.shift(LEFT*3).shift(UP*0.8), rate_func=linear)
+        self.play(FadeOut(arc, shift=LEFT*2), cir5.animate.shift(LEFT*3).scale(0.5).shift(UP*0.1), pol5.animate.shift(LEFT*3).scale(0.5), pol5s.animate.shift(LEFT*3).scale(0.5), pol5t.animate.shift(LEFT*3).shift(UP*0.8), rate_func=linear)
 
         self.play(FadeIn(self.pol_vg))
 
@@ -197,7 +202,168 @@ class HistoryOfIntegration(Scene):
         self.wait(5)
         self.play(FadeOut(self.pol_vg, pol5, pol5s, pol5t, cir5))
 
-        #
+        self.wait(3)
+
+        ee = MathTex(r"f(t)&=2x+5 \\", r"f'(t)&=2", color=YELLOW)
+        self.play(FadeIn(ee[0]))
+        self.wait()
+        self.play(FadeIn(ee[1], shift=UP))
+        
+        self.wait(5)
+        self.play(FadeOut(ee))
+
+        eq = MathTex(r"y=x^{2}", color=YELLOW).shift(LEFT*3)
+        eqd = MathTex(r"\frac{dy}{dx}=2x", color=RED).shift(RIGHT*3)
+        _sax = NumberPlane(
+            (0, 2.5, 0.5), (0, 5, 1),
+            5, 4,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN).shift(LEFT*3)
+        sylabel = _sax.get_y_axis_label(
+            Tex("Displacement").rotate(90*DEGREES),
+            edge=LEFT,
+            direction=LEFT,
+
+        )
+        sxlabel = _sax.get_x_axis_label(
+            Tex("Time"),
+            edge=DOWN,
+            direction=DOWN
+        )
+        _vax = NumberPlane(
+            (0, 2.5, 0.5), (0, 5, 1),
+            5, 4,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN).shift(RIGHT*3)
+        vylabel = _vax.get_y_axis_label(
+            Tex("Velocity").rotate(90*DEGREES),
+            edge=LEFT,
+            direction=LEFT,
+
+        )
+        vxlabel = _vax.get_x_axis_label(
+            Tex("Time"),
+            edge=DOWN,
+            direction=DOWN
+        )
+        
+        ax_eq = _sax.plot(lambda x: x**2, x_range=(0, 2.5), color=YELLOW)
+        ax_eqd = _vax.plot(lambda x: 2*x, x_range=(0, 2.5), color=RED)
+        sax = VGroup(_sax, sylabel, sxlabel)
+        vax = VGroup(_vax, vylabel, vxlabel)
+        self.play(Write(eq), Write(eqd))
+        self.wait(5)
+        self.play(eq.animate.shift(UP*3), eqd.animate.shift(UP*3))
+        self.play(Create(sax), Create(vax), rate_func=linear, run_time=2)
+        self.play(Create(ax_eq), Create(ax_eqd))
+
+        self.wait(5)
+        self.play(FadeOut(sax, vax, ax_eq, ax_eqd, eq, eqd))
+
+        eq = MathTex(r"v&=5t \\", r"s&=?", color=YELLOW)
+        self.play(Write(eq[0]))
+        self.wait()
+        self.play(FadeIn(eq[1], shift=UP*2), run_time=2)
+
+        self.wait(5)
+        self.play(FadeOut(eq))
+
+        _vax = NumberPlane(
+            (0, 6, 0.5), (0, 3, 0.5),
+            8, 4,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN)
+        vylabel = _vax.get_y_axis_label(
+            Tex("Velocity").rotate(90*DEGREES),
+            #edge=LEFT,
+            direction=LEFT,
+
+        )
+        vxlabel = _vax.get_x_axis_label(
+            Tex("Time"),
+            #edge=DOWN,
+            direction=DOWN
+        )
+
+        ax_eqd = _vax.plot(lambda x: np.sin(x)+1.5, x_range=(0, 6), color=RED)
+        vax = VGroup(_vax, vylabel, vxlabel)
+        self.play(Create(vax), rate_func=linear, run_time=2)
+        self.play(Create(ax_eqd))
+        self.wait(10)
+
+        a = _vax.get_area(ax_eqd, (0, 6), color=YELLOW_B)
+        #self.play(Write(a))
+        r = _vax.get_riemann_rectangles(
+            ax_eqd,
+            x_range=(0, 6),
+            dx=0.4,
+            fill_opacity=0.6
+        )
+        self.play(Write(r))
+        v = Tex(r"\textbf{v} \ \ \ ", r"\{").set_color_by_tex("v", RED).shift(LEFT*2.5).shift(DOWN*1.4)
+        t = MathTex(r"\underbrace{} \\", r"\Delta t").set_color_by_tex("t", RED).shift(DOWN*3.4).shift(LEFT*1.1)
+        self.play(Write(v), v[1].animate.scale(6.8))
+        self.wait(2)
+        self.play(Write(t), t[0].animate.scale(0.6))
+
+        aeqq = MathTex(r"Area=\sum", r" \ ", r" \ ", color=YELLOW).shift(UP).shift(RIGHT)
+        self.wait(2)
+        self.play(Write(aeqq))
+        self.play(FadeOut(v[1]), v[0].animate.move_to(aeqq[1]).shift(RIGHT*2.5).shift(UP), run_time=0.5)
+        self.play(FadeOut(t[0]), t[1].animate.move_to(aeqq[2]).shift(RIGHT*3).shift(UP), run_time=0.5)
+
+        self.wait(5)
+        rn = _vax.get_riemann_rectangles(
+            ax_eqd,
+            x_range=(0, 6),
+            dx=0.2,
+            fill_opacity=0.6
+        )
+        self.play(ReplacementTransform(r, rn), run_time=2)
+        self.wait(3)
+
+        ri = _vax.get_riemann_rectangles(
+            ax_eqd,
+            x_range=(0, 6),
+            dx=0.05,
+            fill_opacity=0.6
+        )
+        self.play(ReplacementTransform(rn, ri), run_time=2)
+
+        a = _vax.get_area(ax_eqd, (1, 5), opacity=0.8)
+        self.wait(3)
+        aa = _vax.get_area(ax_eqd, opacity=0.8)
+        #self.play(ReplacementTransform(ri, a), FadeOut(t[0], scale=0.1))
+
+        aeq = MathTex(r"Area&=\lim_{\Delta t\to 0} (\sum v \ \Delta t", r") \\ &=\int v dt", color=YELLOW).shift(RIGHT).shift(UP*2.5)
+        self.play(Write(aeq), FadeOut(aeqq, v[0], t[1], ri))
+        self.play(Write(aa))
+
+        self.wait(3)
+        self.play(FadeOut(aeq, aa))
+
+        i = MathTex(r"\int f(x) \ dx", color=YELLOW).shift(LEFT*3).shift(UP*2.5)
+        iab = MathTex(r"\int_{a}^{b} f(x) \ dx", color=YELLOW).shift(RIGHT*3).shift(UP*2.5)
+        at = Tex("a", color=YELLOW).move_to(_vax.c2p(1, 0)).shift(DOWN*0.3)
+        bt = Tex("b", color=YELLOW).move_to(_vax.c2p(5, 0)).shift(DOWN*0.3)
+        self.wait(10)
+        self.play(Write(i), run_time=2)
+        self.wait(10)
+        self.play(Write(iab), Write(a), FadeIn(at, bt), run_time=2)
+
+        self.wait(5)
+        ft = ImageMobject("src/fund_theo.png")
+        self.play(FadeIn(ft))
+
+        self.wait(30)
+        self.play(FadeOut(ft, vax, i, iab, at, bt))
+        
 
 
 
