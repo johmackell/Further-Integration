@@ -1,0 +1,9 @@
+\documentclass[preview]{standalone}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\begin{align*}
+F(\omega)&= \int_{-\infty}^{\infty} \cos{(5\pi t)}e^{-i\omega t} dt \\ &= \int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)}-i\cos{(5\pi t)}\sin{(\omega t)} \ dt \\ &=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} \ dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} \ dt \\ \\ F(\omega)&=F_{r}(\omega)-iF_{i}(\omega) \quad \textrm{since} \quad F_{i}=0; \\  F(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} \ dt \\  \textrm{When} \quad \omega&=5\pi : \\ F(5\pi)&=\infty
+\end{align*}
+\end{document}

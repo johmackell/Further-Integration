@@ -314,7 +314,7 @@ class HistoryOfIntegration(Scene):
         self.wait(2)
         self.play(Write(t), t[0].animate.scale(0.6))
 
-        aeqq = MathTex(r"Area=\sum", r" \ ", r" \ ", color=YELLOW).shift(UP).shift(RIGHT)
+        aeqq = MathTex(r"Area\approx\sum", r" \ ", r" \ ", color=YELLOW).shift(UP).shift(RIGHT)
         self.wait(2)
         self.play(Write(aeqq))
         self.play(FadeOut(v[1]), v[0].animate.move_to(aeqq[1]).shift(RIGHT*2.5).shift(UP), run_time=0.5)
@@ -762,7 +762,7 @@ class IntroducingFT(Scene):
 
 
 
-
+### Done in high quality
 class ApplyingFT(Scene):
     def construct(self):
         self.wait(3)
@@ -783,21 +783,23 @@ class ApplyingFT(Scene):
         self.play(Write(ftt))
         self.play(ftt.animate.shift(UP*3).shift(RIGHT*3))
         fft = MathTex(
-            r"F(\omega)&= \int_{-\infty}^{\infty} \cos{(5\pi t)}e^{-i\omega t} dt \\",
-            r"&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt \\ \\",
-            r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt"
+            r"F(\omega)&= \int_{-\infty}^{\infty} \cos{(5\pi t)}e^{-i\omega t} \ dt \\",
+            r"&= \int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)}-i\cos{(5\pi t)}\sin{(\omega t)} \ dt \\",
+            r"&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} \ dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} \ dt \\ ",
+            r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} \ dt"
         ).scale(0.7)
-        fft[2].set_color(YELLOW).set_z_index(2)
+        fft[3].set_color(YELLOW).set_z_index(2)
         self.play(Write(fft[0]), run_time=2)
         self.play(Write(fft[1]), run_time=2)
-        self.wait(1.5)
         self.play(Write(fft[2]), run_time=2)
-        _rft = SurroundingRectangle(fft[2], color=RED, z_index=1)
-        _rfb = BackgroundRectangle(fft[2], fill_opacity=1, buff=0.1, z_index=1)
+        self.wait(1.5)
+        self.play(Write(fft[3]), run_time=2)
+        _rft = SurroundingRectangle(fft[3], color=RED, z_index=1)
+        _rfb = BackgroundRectangle(fft[3], fill_opacity=1, buff=0.1, z_index=1)
         self.play(Create(_rft))
         self.wait(5)
-        rft = VGroup(fft[2], _rft, _rfb)
-        self.play(rft.animate.shift(UP*4.5).shift(LEFT*2), FadeOut(ft, ftt, fft[0:2], shift=UP*2))
+        rft = VGroup(fft[3], _rft, _rfb)
+        self.play(rft.animate.shift(UP*4.8).shift(LEFT*2), FadeOut(ft, ftt, fft[0:3], shift=UP*2))
 
         self.wait(5)
 
@@ -810,15 +812,15 @@ class ApplyingFT(Scene):
         #)
         _nt = Variable(1, r"\omega", num_decimal_places=2).shift(RIGHT*3).shift(UP*3.5)
         _nt_pi = always_redraw(
-            lambda: MathTex(f"{dn}", color=RED).set_z_index(3).move_to(_nt).shift(RIGHT*0.5)
+            lambda: MathTex(f"{dn}", color=RED).set_z_index(3).move_to(_nt).shift(RIGHT*0.6)
         )
         _a = always_redraw(
-            lambda: MathTex(f"Area={a}", color=RED).set_z_index(3).shift(UP*3.5)
+            lambda: MathTex(f"Area\\approx{a}", color=RED).set_z_index(3).shift(UP*3.5)
         )
         _nt.label.set_color(YELLOW)
         _nt.value.set_color(RED)
         nt_tracker = _nt.tracker
-        _ntb = BackgroundRectangle(_nt_pi, fill_opacity=1, buff=0.5, z_index=1)
+        _ntb = BackgroundRectangle(_nt_pi, fill_opacity=1, buff=0.4, z_index=1)
 
         _ax = NumberPlane(
             (-3*PI, 3*PI, 1), (-1.5, 1.5, 0.25),
@@ -871,9 +873,9 @@ class ApplyingFT(Scene):
         self.play(FadeIn(_nt_pi, _ntb))
         
         self.wait(5)
-        self.play(FadeOut(ax, _a, _nt, _rfb, ax_eq, ax_ar, _nt_pi, _ntb, _rft, fft[2]))
+        self.play(FadeOut(ax, _a, _nt, _rfb, ax_eq, ax_ar, _nt_pi, _ntb, _rft, fft[3]))
 
-        _fi = MathTex(r"F_{r}(\omega)&=i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt", color=YELLOW).scale(0.7)
+        _fi = MathTex(r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt", color=YELLOW).scale(0.7)
         fib = SurroundingRectangle(_fi, color=RED)
         self.play(Write(_fi), Create(fib))
         fi = VGroup(_fi, fib)
@@ -902,11 +904,276 @@ class ApplyingFT(Scene):
         self.play(n.animate.set_value(6*PI), nt_tracker.animate.set_value(6*PI), run_time=5)
 
         self.wait(10)
+        self.play(FadeOut(fi, ax_eq, ax_ar, ax, _nt, _a))
 
         fft = MathTex(
             r"F(\omega)&= \int_{-\infty}^{\infty} \cos{(5\pi t)}e^{-i\omega t} dt \\",
-            r"&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt \\ \\",
-            r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} dt"
+            r"&= \int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)}-i\cos{(5\pi t)}\sin{(\omega t)} \ dt \\",
+            r"&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} \ dt - i\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} \ dt \\ \\",
+            r"F(\omega)&=F_{r}(\omega)-iF_{i}(\omega) \quad \textrm{since} \quad F_{i}=0 ; \\ ",
+            r"F(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(\omega t)} \ dt \\ ",
+            r"\textrm{When} \quad \omega&=5\pi ; \\",
+            r"F(5\pi)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\cos{(5\pi t)} \ dt \\ ",
+            r"&=\int_{-\infty}^{\infty} \cos^{2}{(5\pi t)} \ dt \\ ",
+            r"F(5\pi)&=\infty"
         ).scale(0.7)
+        fft[-1].set_color(YELLOW)
+        _ftr = SurroundingRectangle(fft[-1], color=RED)
+        ftr = VGroup(fft[-1], _ftr)
 
-        self.play(Write(fft), run_time=3)
+        for i in fft:
+            self.play(Write(i), run_time=3)
+        
+        self.wait(5)
+        self.play(Create(_ftr))
+        self.play(FadeOut(fft[0:-1]), ftr.animate.shift(UP*7.2))
+        
+        ax = Axes(
+            (-3, 3, 1), (-1, 5, 1),
+            8, 6,
+            tips=False
+        )
+        xlabel = ax.get_x_axis_label(r"\omega")
+        pline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(2, 4),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        pline_t = MathTex(r"\infty", color=RED).next_to(pline, UP)
+        pline_l = MathTex(r"+5\pi").next_to(pline, DOWN*1.3)
+        nline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(-2, 4),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        nline_t = pline_t.copy().next_to(nline, UP)
+        nline_l = MathTex(r"-5\pi").next_to(nline, DOWN*1.3)
+
+        self.play(Create(ax), Create(xlabel), run_time=2)
+        self.play(
+            Create(pline), Create(nline),
+            Write(pline_t), Write(nline_t),
+            Write(pline_l), Write(nline_l),
+            run_time=2
+        )
+
+        self.wait(10)
+        self.play(FadeOut(ftr, ax, xlabel, pline, pline_t, pline_l, nline, nline_t, nline_l))
+
+        fft = MathTex(
+            r"F_{r}(\omega)=\int_{-\infty}^{\infty}[",
+            r"\cos{( 1.4 t)}", '+',
+            r"\cos{( 2.2 t)}", '+',
+            r"\cos{( \pi t)}", '+',
+            r"\cos{( 3\pi t)}",
+            r"]\cos{( \quad \omega \quad t)} \ dt",
+            substrings_to_isolate=(r"\omega",),
+            color=YELLOW
+        ).scale(0.8).set_color_by_tex(r"\omega", RED)
+        
+        dn = DecimalNumber(1, color=RED).scale(0.8).next_to(fft, RIGHT).shift(LEFT*1.75)
+
+        self.play(Write(fft), run_time=2)
+        
+        ul = Underline(fft[3], color=RED)
+
+        self.play(FadeOut(fft[-2]), FadeIn(dn))
+
+        self.play(Create(ul))
+        self.play(dn.animate.set_value(1.4))
+        self.wait(2)
+        self.play(
+            ul.animate.next_to(fft[4], DOWN, buff=0.2).shift(RIGHT),
+            dn.animate.set_value(2.2)
+        )
+        self.wait(2)
+        self.play(
+            ul.animate.next_to(fft[5], DOWN, buff=0.2).shift(RIGHT*2),
+            dn.animate.set_value(PI)
+        )
+        self.wait(2)
+        self.play(
+            ul.animate.next_to(fft[6], DOWN, buff=0.2).shift(RIGHT*2.8),
+            dn.animate.set_value(3*PI)
+        )
+        self.wait(2)
+        
+        self.wait(5)
+        self.play(FadeOut(ul, fft, dn))
+        
+        ft = MathTex(r"f(t)=\sin{(5\pi t)}", color=YELLOW).shift(UP*3)
+        self.play(Write(ft), run_time=2)
+        self.wait(3)
+        fft = MathTex(
+            r"F(\omega)&=\int_{-\infty}^{\infty}\sin(5\pi t)e^{-i\omega t} \ dt \\",
+            r"&=\int_{-\infty}^{\infty}\sin(5\pi t)\cos{(\omega t) \ dt-i\int_{-\infty}^{\infty}\sin(5\pi t)}\sin{(\omega t)} \ dt \\ \\",
+            r"F_{r}(\omega)&=\int_{-\infty}^{\infty}\sin(5\pi t)\cos{(\omega t) \ dt"
+        )
+        self.play(Write(fft[0:2]), run_time=3)
+        self.play(Write(fft[2]), run_time=2)
+        self.play(FadeOut(ft, fft[0:2]), fft[2].animate.set_color(YELLOW), fft[2].animate.shift(UP*5).scale(0.7).shift(LEFT))
+
+        # ===== =====
+        n = ValueTracker(1)
+        nt_tracker.set_value(1.00)
+
+        _ax = NumberPlane(
+            (-3*PI, 3*PI, 1), (-1.5, 1.5, 0.25),
+            16, 8,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN)
+        xlabel = _ax.get_x_axis_label(
+            MathTex(r"\omega"),
+            direction=DOWN
+        )
+        ax_eq = always_redraw(
+            lambda: _ax.plot(lambda x: np.sin(5*x)*np.cos((n.get_value()/PI)*x))
+        )
+        ax_ar = always_redraw(
+            lambda: _ax.get_area(ax_eq, color=YELLOW_B)
+        )
+        a = "0"
+        _a = always_redraw(
+            lambda: MathTex(f"Area\\approx{a}", color=RED).set_z_index(3).shift(UP*3.5)
+        )
+
+        ax = VGroup(_ax, xlabel)
+
+        self.play(Create(ax), Write(_nt), Write(_a), run_time=2)
+        self.play(Create(ax_eq), run_time=2)
+        self.play(Write(ax_ar))
+
+        self.play(n.animate.set_value(2*PI), nt_tracker.animate.set_value(2*PI), run_time=2)
+        self.wait(2)
+        self.play(n.animate.set_value(5*PI), nt_tracker.animate.set_value(5*PI), run_time=4)
+        self.wait(5)
+        self.play(FadeOut(ax, _a, _nt, ax_eq, ax_ar, fft[2]))
+        # ===== =====
+
+        fti = MathTex(r"F_{i}(\omega)&=\int_{-\infty}^{\infty}\sin{(5\pi t)}\sin{(\omega t)} \ dt", color=YELLOW)
+        self.play(Write(fti), run_time=2)
+        self.play(fti.animate.scale(0.7).shift(UP*2.5).shift(LEFT*3))
+        # ===== =====
+        n = ValueTracker(1)
+        nt_tracker.set_value(1.00)
+
+        _ax = NumberPlane(
+            (-3*PI, 3*PI, 1), (-1.5, 1.5, 0.25),
+            16, 8,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN)
+        xlabel = _ax.get_x_axis_label(
+            MathTex(r"\omega"),
+            direction=DOWN
+        )
+        ax_eq = always_redraw(
+            lambda: _ax.plot(lambda x: np.sin(5*x)*np.sin((n.get_value()/PI)*x))
+        )
+        ax_ar = always_redraw(
+            lambda: _ax.get_area(ax_eq, color=YELLOW_B)
+        )
+        a = "0"
+        _a = always_redraw(
+            lambda: MathTex(f"Area\\approx{a}", color=RED).set_z_index(3).shift(UP*3.5)
+        )
+
+        ax = VGroup(_ax, xlabel)
+
+        self.play(Create(ax), Write(_nt), Write(_a), run_time=2)
+        self.play(Create(ax_eq), run_time=2)
+        self.play(Write(ax_ar))
+
+        mft = MathTex(
+            r"F_{i}(\omega)&=\int_{-\infty}^{\infty}\sin{(5\pi t)}\sin{(5\pi t)} \ dt \\",
+            r"&=\int_{-\infty}^{\infty}\sin^{2}{(5\pi t)} \ dt",
+            color=BLUE
+        ).shift(DOWN*2.5).scale(0.7)
+
+        self.play(n.animate.set_value(2*PI), nt_tracker.animate.set_value(2*PI), run_time=2)
+        self.wait(2)
+        self.play(n.animate.set_value(5*PI), nt_tracker.animate.set_value(5*PI), run_time=4)
+        a = r"\infty"
+        self.play(Write(mft), run_time=2)
+        self.wait(5)
+        self.play(FadeOut(mft))
+        a = "0"
+        self.play(n.animate.set_value(-5*PI), nt_tracker.animate.set_value(-5*PI), run_time=6)
+        a = r"-\infty"
+        nmft = MathTex(
+            r"F_{i}(\omega)&=\int_{-\infty}^{\infty}\sin{(5\pi t)}\sin{(-5\pi t)} \ dt \\",
+            r"&=-\int_{-\infty}^{\infty}\sin^{2}{(5\pi t)} \ dt",
+            color=BLUE
+        ).shift(UP).scale(0.7)
+        self.play(Write(nmft), run_time=2)
+        self.wait(5)
+
+        self.play(FadeOut(ax, _a, _nt, ax_eq, ax_ar, nmft, nmft, fti))
+        # ===== =====
+
+        ft = MathTex(r"\therefore F(5\pi)&=\pm i\int_{-\infty}^{\infty}\sin^{2}{(5\pi t)} \ dt", color=YELLOW)
+        self.play(Write(ft))
+        self.play(ft.animate.shift(UP*3.5).shift(LEFT*3).scale(0.7))
+
+        ax = Axes(
+            (-3, 3, 1), (-5, 5, 1),
+            8, 6,
+            tips=False
+        )
+        xlabel = ax.get_x_axis_label(r"\omega")
+        pline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(2, -4),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        pline_t = MathTex(r"-\infty", color=RED).next_to(pline, DOWN)
+        pline_l = MathTex(r"+5\pi").next_to(pline, UP*1.3)
+        nline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(-2, 4),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        nline_t = MathTex(r"\infty", color=RED).next_to(nline, UP)
+        nline_l = MathTex(r"-5\pi").next_to(nline, DOWN*1.3)
+
+        self.play(Create(ax), Create(xlabel), run_time=2)
+        self.play(
+            Create(pline), Create(nline),
+            Write(pline_t), Write(nline_t),
+            Write(pline_l), Write(nline_l),
+            run_time=2
+        )
+
+        self.wait(15)
+        self.play(FadeOut(ft, ax, xlabel, pline, pline_t, pline_l, nline, nline_t, nline_l))
+
+
+
+class IntegrationByParts(Scene):
+    def construct(self):
+        self.wait(3)
+        self.play_scene()
+        self.wait(3)
+    
+    def play_scene(self):
+        t = Title("Integration by Parts", color=RED)
+        self.play(Write(t))
+        
+        self.wait(5)
+
+        #
