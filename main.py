@@ -1176,4 +1176,297 @@ class IntegrationByParts(Scene):
         
         self.wait(5)
 
-        #
+        ibp_img = ImageMobject("src/int_by_parts.png").scale(1.5).shift(RIGHT)
+        self.play(FadeIn(ibp_img))
+
+        self.wait(5)
+        self.play(ibp_img.animate.shift(RIGHT*3))
+
+        liate_img = ImageMobject("src/liate_rule.png").shift(LEFT*3)
+        self.play(FadeIn(liate_img, shift=RIGHT*2))
+
+        self.wait(5)
+        self.play(FadeOut(t, ibp_img, liate_img))
+
+        tri = MathTex(
+            r"\Lambda(t)=\left\{\begin{array}{rcl}1+t & \textrm{for} & -1\leq t<0 \\ 1-t & \textrm{for} & 0\leq t \leq +1 \\ 0 & & otherwise \end{array}\right.",
+            color=BLUE
+        )
+        tri_sr = SurroundingRectangle(tri, color=YELLOW)
+        tri = VGroup(tri, tri_sr)
+        self.play(Write(tri), run_time=2)
+        self.play(tri.animate.scale(0.7).shift(LEFT*4).shift(UP*2))
+
+        ax = Axes(
+            (-3, 3, 1), (-0.5, 1.5, 0.5),
+            12, 6
+        )
+        label1 = Text("1").next_to(ax.c2p(0, 1), LEFT, buff=0.2)
+        labelp1 = Text("1").next_to(ax.c2p(1, 0), DOWN, buff=0.2)
+        labeln1 = Text("-1").next_to(ax.c2p(-1, 0), DOWN, buff=0.2)
+        label0 = Text("0").next_to(ax.c2p(0, 0), DL, buff=0.2)
+        def tri_func(x):
+            if -1 <= x and x < 0: return 1+x
+            if 0 <= x and x <= 1: return 1-x
+            # otherwise
+            return 0
+        ax_eq = ax.plot(lambda x: tri_func(x), color=BLUE)
+
+        self.play(Create(ax), Create(label1), Create(labelp1), Create(labeln1), Create(label0))
+        self.play(Create(ax_eq), run_time=2)
+
+        self.wait(5)
+        self.play(FadeOut(ax, label1, label0, labelp1, labeln1, ax_eq))
+        self.play(tri.animate.shift(RIGHT*8).shift(UP))
+
+        ft = MathTex(
+            r"\textrm{For} \quad f(t)&=\Lambda(t) \\ \\",
+            r"F(\omega)&=\int_{-\infty}^{\infty}\Lambda(t)e^{-i\omega t} \ dt \\",
+            r"F(\omega)&=\int_{-1}^{0}(1+t)e^{-i\omega t} \ dt+\int_{0}^{+1}(1-t)e^{-i\omega t} \ dt \\",
+            r"&={{ \int_{-1}^{0}1\cdot e^{-i\omega t} \ dt }}+\int_{-1}^{0}t\cdot e^{-i\omega t} \ dt+{{ \int_{0}^{+1}1\cdot e^{-i\omega t} \ dt }}-\int_{0}^{+1}t\cdot e^{-i\omega t} \ dt \\",
+            r"&={{ \int_{-1}^{+1}e^{-i\omega t} \ dt }}+\int_{-1}^{0}t e^{-i\omega t} \ dt-\int_{0}^{+1}t e^{-i\omega t} \ dt"
+        ).scale(0.7)
+        ft[0].set_color(YELLOW)
+        self.play(Write(ft[0]))
+        self.wait(3)
+        self.play(Write(ft[1]), run_time=2)
+        self.play(Write(ft[2:]))
+        sr1 = SurroundingRectangle(ft[4], color=RED)
+        sr2 = SurroundingRectangle(ft[6], color=RED)
+        self.play(Create(sr1), Create(sr2))
+
+        self.wait(5)
+
+        sr = SurroundingRectangle(ft[9], color=YELLOW)
+        self.play(Create(sr), FadeOut(sr1, sr2))
+
+        self.wait()
+
+        t1 = MathTex(
+            r"T_{1}&=", r"\int_{-1}^{+1}e^{-i\omega t} \ dt \\ ",
+            r"&=\left[\frac{-1}{i\omega}\cdot e^{-i\omega t}\right]_{-1}^{+1} \\",
+            r"&=\frac{-1}{i\omega}\left[e^{-i\omega\cdot 1}-e^{-i\omega\cdot -1}\right] \\ ",
+            r"&=", r"\frac{i(e^{-i\omega}-e^{i\omega})}{\omega}"
+        ).shift(LEFT*4).shift(UP).scale(0.7)
+        t1[0:2].set_color(YELLOW)
+        t1_sr = SurroundingRectangle(t1[-1], color=YELLOW)
+
+        self.play(FadeOut(ft[1:9], ft[10:11], sr), ft[0].animate.shift(UP), Write(t1[0]), ReplacementTransform(ft[9], t1[1]), run_time=2)
+        self.wait()
+        self.play(Write(t1[2:]), run_time=4)
+        self.wait(5)
+        self.play(Create(t1_sr))
+        self.wait(3)
+        self.play(FadeOut(t1[1:-1], ft[9]), Uncreate(t1_sr), t1[0].animate.shift(RIGHT*9.5).shift(DOWN))
+        self.play(t1[-1].animate.next_to(t1[0], RIGHT))
+        t1[-1].set_color(YELLOW)
+        t1 = VGroup(t1[0], t1[-1])
+        t1_sr = SurroundingRectangle(t1, color=RED)
+        self.play(Create(t1_sr), FadeOut(ft[0]))
+
+        self.wait(5)
+
+        fpe = MathTex(
+            r"F(\omega)&=\int_{-1}^{+1}e^{-i\omega t} \ dt+\int_{-1}^{0}",
+            r"t e^{-i\omega t}",
+            r" \ dt-\int_{0}^{+1}",
+            r"t e^{-i\omega t}",
+            r"\ dt \\ \\ \\ ",
+            r"\int t e^{-i\omega t} \ dt"
+        ).scale(0.7).shift(LEFT*3).shift(UP)
+        fpe[-1].set_color(YELLOW).shift(RIGHT*2)
+
+        f1_ul = Underline(fpe[1], color=RED)
+        f2_ul = Underline(fpe[3], color=RED)
+        self.play(Write(fpe[0:-1]))
+        self.wait(2)
+        self.play(Create(f1_ul), Create(f2_ul))
+        self.wait(2)
+        self.play(Write(fpe[-1]))
+        self.wait(5)
+        self.play(Uncreate(f1_ul), Uncreate(f2_ul), FadeOut(fpe[0:-1]), fpe[-1].animate.shift(UP*3.5))
+
+        _t23 = MathTex(
+            r"T_{2,3}&=",
+            r"\textrm{Let} \quad \begin{array}{rl}u=t & v'=e^{-i\omega t} \\ u'=1 & v=\frac{-1}{i\omega}\cdot e^{-i\omega t} \end{array} \\ \\ ",
+            r"T_{2,3}&=t\cdot \frac{-1}{i\omega}\cdot e^{-i\omega t}-\int 1\cdot \frac{-1}{i\omega t}\cdot e^{-i\omega t} \ dt \\",
+            r"&=\frac{ite^{-i\omega t}}{\omega}+\frac{1}{i\omega}\int e^{-i\omega t} \ dt \\",
+            r"&=\frac{ite^{-i\omega t}}{\omega}+\frac{1}{i\omega}\left(\frac{-1}{i\omega}\cdot e^{-i\omega t}\right) \\",
+            r"&=\frac{ite^{-i\omega t}}{\omega}-\frac{1}{i^{2}\omega^{2}}\cdot e^{-i\omega t} \\",
+            r"&=\frac{ite^{-i\omega t}}{\omega}+\frac{e^{-i\omega t}}{\omega^{2}}",
+            r"=\frac{i\omega t e^{-i\omega t}+e^{-i\omega t}}{\omega^{2}}",
+            r"=", r"\frac{e^{-i\omega t}(1+i\omega t)}{\omega^{2}}"
+        ).scale(0.7).shift(LEFT)
+        _t23[0].set_color(YELLOW).next_to(fpe[-1], LEFT)
+        _t23[1].set_color(BLUE).shift(DL*0.3).shift(LEFT)
+        self.play(Write(_t23[0]))
+        for i in range(1, 9):
+            self.play(Write(_t23[i]), run_time=3)
+            self.wait()
+        self.play(Write(_t23[9], run_time=3))
+        
+        l_sr = SurroundingRectangle(_t23[-1], color=YELLOW)
+        self.play(Create(l_sr))
+        self.wait(3)
+        self.play(Uncreate(l_sr))
+        self.play(_t23[0].animate.next_to(t1, DOWN*2).shift(LEFT))
+        self.play(_t23[-1].animate.next_to(_t23[0], RIGHT))
+        _t23[-1].set_color(YELLOW)
+        t23 = VGroup(_t23[0], _t23[-1])
+        t23_sr = SurroundingRectangle(t23, color=RED)
+        t23 += t23_sr
+        self.play(Create(t23_sr))
+
+        self.wait(5)
+
+        self.play(Unwrite(_t23[1:-1]), Unwrite(fpe[-1]), run_time=3)
+        self.play(Write(fpe[0:-1].set_color(YELLOW).shift(UP).shift(LEFT*0.4)))
+        self.wait(2)
+        f1_ul = Underline(fpe[1], color=RED).scale(2).shift(DOWN*0.35)
+        self.play(Create(f1_ul))
+
+        _t2 = MathTex(
+            r"T_{2}&=",
+            r"\int_{-1}^{0}t e^{-i\omega t} \ dt \\",
+            r"&=\left[\frac{e^{-i\omega t}(1+i\omega t)}{\omega^{2}}\right]_{-1}^{0} \\",
+            r"&=\frac{e^{-i\omega\cdot 0}(1+i\omega\cdot 0)}{\omega^{2}}-\frac{e^{-i\omega\cdot -1}(1+i\omega\cdot -1)}{\omega^{2}} \\",
+            r"&=\frac{1(1+0)-e^{i\omega}(1-i\omega)}{\omega^{2}} \\",
+            r"&=",
+            r"\frac{1-e^{i\omega}(1-i\omega)}{\omega^{2}}"
+        ).scale(0.7).shift(LEFT*2)
+        _t2[0:2].set_color(YELLOW)
+        _t2_sr = SurroundingRectangle(_t2[-1], color=YELLOW)
+        self.play(Write(_t2[0:2]))
+        for i in range(2, 5):
+            self.play(Write(_t2[i]), run_time=3)
+            self.wait()
+        self.play(Write(_t2[-2:]), run_time=3)
+        self.play(Create(_t2_sr))
+
+        self.wait(2)
+        self.play(Uncreate(_t2_sr), _t2[0].animate.next_to(t1, DOWN*2).shift(LEFT*1.1), t23.animate.shift(DOWN))
+        _t2[-1].set_color(YELLOW)
+        self.play(_t2[-1].animate.next_to(_t2[0], RIGHT))
+        t2 = VGroup(_t2[0], _t2[-1])
+        t2_sr = SurroundingRectangle(t2, color=RED)
+        t2 += t2_sr
+        self.play(Create(t2_sr))
+
+        self.wait(5)
+
+        self.play(Unwrite(_t2[1:-1]), run_time=3)
+        self.wait()
+        self.play(f1_ul.animate.shift(RIGHT*2))
+
+        _t3 = MathTex(
+            r"T_{3}&=",
+            r"\int_{0}^{+1}t e^{-i\omega t} \ dt \\",
+            r"&=\left[\frac{e^{-i\omega t}(1+i\omega t)}{\omega^{2}}\right]_{0}^{+1} \\",
+            r"&=\frac{e^{-i\omega\cdot 1}(1+i\omega\cdot 1)}{\omega^{2}}-\frac{e^{-i\omega\cdot 0}(1+i\omega\cdot 0)}{\omega^{2}} \\",
+            r"&=\frac{e^{-i\omega}(1+i\omega)-1(1+0)}{\omega^{2}} \\",
+            r"&=",
+            r"\frac{e^{-i\omega}(1+i\omega)-1}{\omega^{2}}"
+        ).scale(0.7).shift(LEFT*2)
+        _t3[0:2].set_color(YELLOW)
+        _t3_sr = SurroundingRectangle(_t3[-1], color=YELLOW)
+        self.play(Write(_t3[0:2]))
+        for i in range(2, 5):
+            self.play(Write(_t3[i]), run_time=3)
+            self.wait()
+        self.play(Write(_t3[-2:]), run_time=3)
+        self.play(Create(_t3_sr))
+
+        self.wait(2)
+        self.play(Uncreate(_t3_sr), _t3[0].animate.next_to(t2, DOWN*1.7).shift(LEFT*1.25), t23.animate.shift(DOWN*1.4))
+        _t3[-1].set_color(YELLOW)
+        self.play(_t3[-1].animate.next_to(_t3[0], RIGHT))
+        t3 = VGroup(_t3[0], _t3[-1])
+        t3 += SurroundingRectangle(t3, color=RED)
+        self.play(Create(t3[2]))
+        self.play(FadeOut(t23, shift=DOWN*5))
+
+        self.wait(5)
+        self.play(FadeOut(_t3[1:-1], fpe[:-1], f1_ul))
+
+        ttt = MathTex(
+            r"F(\omega)&=T_{1}+T_{2}-T_{3} \\",
+            r"&=\frac{i(e^{-i\omega}-e^{i\omega})}{\omega}+\frac{1-e^{i\omega}(1-i\omega)}{\omega^{2}}-\frac{e^{-i\omega}(1+i\omega)-1}{\omega^{2}} \\",
+            r"&=\frac{i\omega(e^{-i\omega}-e^{i\omega})+1-e^{i\omega}(1-i\omega)-e^{-i\omega}(1+i\omega)+1}{\omega^{2}} \\",
+            r"&=\frac{i\omega e^{-i\omega}-i\omega e^{i\omega}+1-e^{i\omega}+i\omega e^{i\omega}-e^{-i\omega}-i\omega e^{-i\omega}+1}{\omega^{2}} \\",
+            r"&=\frac{2-e^{i\omega} - e^{-i\omega}}{\omega^{2}} \\",
+            r"&=\frac{2-(e^{i\omega}+e^{-i\omega})}{\omega^{2}} \quad \\",
+            r"\textrm{Using} \quad 2\cos{\theta}&=e^{i\theta}+e^{-i\theta} \ ; \\",
+            r"&=\frac{2-2\cos{(\omega)}}{\omega^{2}} = 2\left[\frac{1-\cos{(\omega)}}{\omega^{2}}\right] \\",
+            r"\textrm{Using} \quad 1-\cos{\theta}&=2\sin^{2}{\left( \frac{\theta}{2} \right) } \ ; \\",
+            r"&=4\left\{ \frac{\sin^{2}{\left[ \pi \left( \frac{\omega}{2\pi} \right) \right]}}{4\left[ \pi \left( \frac{\omega}{2\pi} \right) \right]^{2} } \right\} \\",
+            r"&=\textrm{sinc}^{2}\left( \frac{\omega}{2\pi} \right)"
+        ).scale(0.7).shift(LEFT)
+        ttt[0].set_color(YELLOW)
+
+        self.play(Write(ttt[0], run_time=2))
+        for i in range(1, 10):
+            self.play(Write(ttt[i]), run_time=2)
+        
+        self.wait(5)
+
+
+
+class Sinewave(Scene):
+    def construct(self):
+        self.play_scene()
+    
+    def play_scene(self):
+        Title = MathTex(r"V(t) = Acos(\omega t + \phi)")
+        self.play(Write(Title))
+        self.play(Title.animate.shift(UP*3))
+
+
+        # Create the axes
+        axes = Axes(x_range=[0, 15, 1.57], y_range=[-2, 2])
+        axis_labels = axes.get_axis_labels(x_label = "t", y_label = "V")
+
+        # This is the value you use for the shift.
+        # On the last line, I use .animate to animate the change in value.
+        # Changing the 'shift' value invokes a change in 'always_redraw'
+        shift = ValueTracker(0)
+        yline = always_redraw(
+            lambda: axes.get_line_from_axis_to_point(
+                0, # 0 indicates that the line comes FROM the x-axis
+                axes.c2p(PI-shift.get_value(), -1),
+                color=RED
+            )
+        )
+        xline = always_redraw(
+            lambda: axes.get_line_from_axis_to_point(
+                1, # 1 indicates that the line come FROM the y-axis
+                axes.c2p(PI-shift.get_value(), -1),
+                line_func=Arrow,
+                line_config={'buff': 0}
+            )
+        )
+        
+        xline_label = Variable(shift.get_value(), r"\phi", color=YELLOW).next_to(xline, DOWN)
+
+        self.play(DrawBorderThenFill(axes))
+        self.play(DrawBorderThenFill(axis_labels))
+
+        # Create the waves
+        # always_redraw makes it so that it replots the line *every* frame. This is the correct way to animate a curve plotted on the axes.
+        graph = always_redraw(
+            lambda: axes.plot(lambda x: np.cos(x+shift.get_value()), color=RED)
+        )
+        self.play(Create(graph), run_time = 4)
+        self.wait(4)
+
+        graph2 = axes.plot(lambda x: 0.5*np.cos(x), color=BLUE)
+
+        self.add(graph2)
+        self.wait()
+
+        self.play(Create(yline), Create(xline), Write(xline_label))
+        self.wait()
+        self.play(shift.animate.set_value(-PI), xline_label.tracker.animate.set_value(-PI))
+
+        self.wait(5)
+
+

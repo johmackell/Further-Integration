@@ -1,0 +1,9 @@
+\documentclass[preview]{standalone}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\begin{align*}
+\textrm{For} \quad f(t)&=\Lambda(t) \\ \\ F(\omega)&=\int_{-\infty}^{\infty}\Lambda(t)e^{-i\omega t} \ dt \\ F(\omega)&=\int_{-1}^{0}(1+t)e^{-i\omega t} \ dt+\int_{0}^{+1}(1-t)e^{-i\omega t} \ dt \\ &=  \int_{-1}^{0}1\cdot e^{-i\omega t} \ dt  +\int_{-1}^{0}t\cdot e^{-i\omega t} \ dt+  \int_{0}^{+1}1\cdot e^{-i\omega t} \ dt  -\int_{0}^{+1}t\cdot e^{-i\omega t} \ dt \\ &=  \int_{-1}^{+1}e^{-i\omega t} \ dt  +\int_{-1}^{0}t e^{-i\omega t} \ dt-\int_{0}^{+1}t e^{-i\omega t} \ dt
+\end{align*}
+\end{document}

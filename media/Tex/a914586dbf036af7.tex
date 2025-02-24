@@ -1,0 +1,9 @@
+\documentclass[preview]{standalone}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\begin{align*}
+T_{2,3}&= \textrm{Let} \quad \begin{array}{rl}u=t & v'=e^{-i\omega t} \\ u'=1 & v=\frac{-1}{i\omega}\cdot e^{-i\omega t} \end{array} \\ \\  T_{2,3}&=t\cdot \frac{-1}{i\omega}\cdot e^{-i\omega t}-\int 1\cdot \frac{-1}{i\omega t}\cdot e^{-i\omega t} \ dt \\ &=\frac{ite^{-i\omega t}}{\omega}+\frac{1}{i\omega}\int e^{-i\omega t} \ dt \\ &=\frac{ite^{-i\omega t}}{\omega}+\frac{1}{i\omega}\left(\frac{-1}{i\omega}\cdot e^{-i\omega t}\right) \\ &=\frac{ite^{-i\omega t}}{\omega}-\frac{1}{i^{2}\omega^{2}}\cdot e^{-i\omega t} \\ &=\frac{ite^{-i\omega t}}{\omega}+\frac{e^{-i\omega t}}{\omega^{2}} =\frac{i\omega t e^{-i\omega t}+e^{-i\omega t}}{\omega^{2}} = \frac{e^{-i\omega t}(1+i\omega t)}{\omega^{2}}
+\end{align*}
+\end{document}

@@ -1,0 +1,9 @@
+\documentclass[preview]{standalone}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\begin{align*}
+F(\omega)&=T_{1}+T_{2}-T_{3} \\ &=\frac{i(e^{-i\omega}-e^{i\omega})}{\omega}+\frac{1-e^{i\omega}(1-i\omega)}{\omega^{2}}-\frac{e^{-i\omega}(1+i\omega)-1}{\omega^{2}} \\ &=\frac{i\omega(e^{-i\omega}-e^{i\omega})+1-e^{i\omega}(1-i\omega)-e^{-i\omega}(1+i\omega)+1}{\omega^{2}} \\ &=\frac{i\omega e^{-i\omega}-i\omega e^{i\omega}+1-e^{i\omega}+i\omega e^{i\omega}-e^{-i\omega}-i\omega e^{-i\omega}+1}{\omega^{2}} \\ &=\frac{2-e^{i\omega} - e^{-i\omega}}{\omega^{2}} \\ &=\frac{2-(e^{i\omega}+e^{-i\omega})}{\omega^{2}} \quad \\ \textrm{Using} \quad 2\cos{\theta}&=e^{i\theta}+e^{-i\theta} \ ; \\ &=\frac{2-2\cos{(\omega)}}{\omega^{2}} = 2\left[\frac{1-\cos{(\omega)}}{\omega^{2}}\right] \\ \textrm{Using} \quad 1-\cos{\theta}&=2\sin^{2}{\left( \frac{\theta}{2} \right) } \ ; \\ &=4\left\{ \frac{\sin^{2}{\left[ \pi \left( \frac{\omega}{2\pi} \right) \right]}}{4\left[ \pi \left( \frac{\omega}{2\pi} \right) \right]^{2} } \right\} \\ &=\textrm{sinc}^{2}\left( \frac{\omega}{2\pi} \right)
+\end{align*}
+\end{document}
