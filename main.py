@@ -1395,19 +1395,29 @@ class IntegrationByParts(Scene):
             r"&=\frac{i\omega e^{-i\omega}-i\omega e^{i\omega}+1-e^{i\omega}+i\omega e^{i\omega}-e^{-i\omega}-i\omega e^{-i\omega}+1}{\omega^{2}} \\",
             r"&=\frac{2-e^{i\omega} - e^{-i\omega}}{\omega^{2}} \\",
             r"&=\frac{2-(e^{i\omega}+e^{-i\omega})}{\omega^{2}} \quad \\",
-            r"\textrm{Using} \quad 2\cos{\theta}&=e^{i\theta}+e^{-i\theta} \ ; \\",
+            r"\textrm{Using}& \quad 2\cos{\theta}=e^{i\theta}+e^{-i\theta} \ ; \\",
             r"&=\frac{2-2\cos{(\omega)}}{\omega^{2}} = 2\left[\frac{1-\cos{(\omega)}}{\omega^{2}}\right] \\",
-            r"\textrm{Using} \quad 1-\cos{\theta}&=2\sin^{2}{\left( \frac{\theta}{2} \right) } \ ; \\",
+            r"\textrm{Using}& \quad 1-\cos{\theta}=2\sin^{2}{\left( \frac{\theta}{2} \right) } \ ; \\",
             r"&=4\left\{ \frac{\sin^{2}{\left[ \pi \left( \frac{\omega}{2\pi} \right) \right]}}{4\left[ \pi \left( \frac{\omega}{2\pi} \right) \right]^{2} } \right\} \\",
-            r"&=\textrm{sinc}^{2}\left( \frac{\omega}{2\pi} \right)"
-        ).scale(0.7).shift(LEFT)
+            r"\textrm{Using}& \quad \textrm{sinc}^{2}(x)=\frac{\sin^{2}{(\pi x)}}{\pi x} \ ;\\",
+            r"\therefore F(\omega)&=\textrm{sinc}^{2}\left( \frac{\omega}{2\pi} \right)"
+        ).scale(0.7).shift(LEFT*2).shift(DOWN*2.5)
+        ttt[0].shift(UP*0.8)
         ttt[0].set_color(YELLOW)
 
         self.play(Write(ttt[0], run_time=2))
-        for i in range(1, 10):
+        for i in range(1, 6):
+            self.play(Write(ttt[i]), run_time=2)
+        self.wait(3)
+        self.play(FadeOut(ttt[1:5]), ttt[5].animate.shift(UP*4))
+        ttt[6:].shift(UP*4)
+        for i in range(6, 12):
             self.play(Write(ttt[i]), run_time=2)
         
-        self.wait(5)
+        self.wait(3)
+
+        fw_sr = SurroundingRectangle(ttt[-1], color=YELLOW)
+        self.play(Create(fw_sr))
 
 
 
