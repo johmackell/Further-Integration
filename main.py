@@ -20,6 +20,9 @@ EULERS_FORMULA = r"e^{i\theta }=\cos{\theta }+i\sin{\theta }"
 C7_CHORD = lambda x: np.sin(262*x) + np.sin(330*x) + np.sin(392*x) + np.sin(494*x)
 FSM7_CHORD = lambda x: np.sin(370*x) + np.sin(466*x) + np.sin(554*x) + np.sin(698*x)
 C_NOISE = lambda x: np.sin(262*x) + np.sin(330*x) + np.sin(392*x) + np.sin(1100*x)
+C = lambda x: np.sin(262*x) + np.sin(330*x) + np.sin(392*x)
+
+
 
 # Develop the graph and integration area under the curve
 class Integral(Scene):
@@ -1782,7 +1785,7 @@ class UnitImpulse(Scene):
 
 
 
-
+### Done in high quality
 class FilteringSound(Scene):
     def construct(self):
         self.wait(3)
@@ -1793,4 +1796,223 @@ class FilteringSound(Scene):
         t = Title("Filtering Sound", color=RED)
         self.play(Write(t), run_time=2)
 
-        #
+        self.wait(5)
+        # ===== =====   ===== =====
+        big_axes = Axes(
+            x_range=(0, 6, 1), y_range=(-4, 4, 2),
+                                y_length=4,
+            tips=False
+        )
+        ax2_t = Text("f(t)", font_size=42, color=MAROON)
+        ax2_t.move_to(DOWN*3)
+        self.ax2 = VGroup(
+            Axes(x_range=(0, 6, 1), y_range=(-4, 4, 2), y_length=4, tips=False),
+            big_axes.plot(C_NOISE, color=MAROON),
+            ax2_t,
+            Line(start=np.array([-6., -2., 0.]), end=np.array([-6., 2., 0.]), color=GOLD)
+        )
+
+        self.play(Create(self.ax2[0]), run_time=2)
+        self.play(Create(self.ax2[1]), Write(self.ax2[2]))
+        self.wait(3)
+        self.play(self.ax2[3].animate.shift(RIGHT*12), run_time=2, rate_func=linear)
+        self.play(FadeOut(self.ax2[3]))
+
+        self.wait(3)
+        self.play(FadeOut(t, shift=UP*2), FadeOut(ax2_t, big_axes, self.ax2[0:3]))
+        # ===== =====   ===== =====
+
+        _ft = MathTex(r"F(\omega)=\int_{-\infty}^{\infty} f(t)e^{-i\omega t} \ dt", color=YELLOW).scale(0.7)
+        self.play(Write(_ft), run_time=2)
+        self.wait()
+        self.play(_ft.animate.shift(UP*3).shift(LEFT*4))
+        _ft_sr = SurroundingRectangle(_ft, RED)
+        self.play(Create(_ft_sr))
+        ft = VGroup(_ft, _ft_sr)
+
+        n = ValueTracker(1)
+        a = "0"
+
+
+
+        def precise_plot(x_min=-10, x_max=10, samples=1000):
+            x_val = np.linspace(x_min, x_max, samples)
+            y_val = (np.sin(2.62*x_val) + np.sin(3.30*x_val) + np.sin(3.92*x_val) + np.sin(11*x_val)) * np.sin(n.get_value()*x_val)
+
+            ax_eq = VMobject()
+            points = [_ax.c2p(x, y) for x, y in zip(x_val, y_val)]
+            ax_eq.set_points_as_corners(points)
+
+            return ax_eq
+        def precise_area(x_min=-10, x_max=10, samples=1000):
+            x_val = np.linspace(x_min, x_max, samples)
+            y_val = (np.sin(2.62*x_val) + np.sin(3.30*x_val) + np.sin(3.92*x_val) + np.sin(11*x_val)) * np.sin(n.get_value()*x_val)
+
+            points = [_ax.c2p(x, y) for x, y in zip(x_val, y_val)]
+            vertices = [_ax.c2p(x_min, 0)] + points + [_ax.c2p(x_max, 0)]
+            ax_ar = Polygon(*vertices, color=YELLOW_B, fill_opacity=0.5, stroke_width=0)
+
+            return ax_ar
+
+
+
+        #_nt = always_redraw(
+        #    lambda: MathTex(rf"\omega={dn}", color=RED).shift(RIGHT*3).shift(DOWN*3).#set_z_index(3)
+        #)
+        _nt = Variable(1, r"\omega", num_decimal_places=2).shift(RIGHT*3).shift(UP*3.5)
+        _nt.label.set_color(YELLOW)
+        _nt.value.set_color(RED)
+        nt_tracker = _nt.tracker
+
+        _ax = NumberPlane(
+            (-6, 6, 1), (-5, 5, 1),
+            16, 8,
+            background_line_style={
+                "stroke_opacity": 0.3
+            }
+        ).shift(DOWN)
+        xlabel = _ax.get_x_axis_label(
+            MathTex(r"\omega"),
+            direction=DOWN
+        )
+        ax_eq = always_redraw(
+            lambda: precise_plot(-10, 10, 2000)
+        )
+        ax_ar = always_redraw(
+            lambda: precise_area(-10, 10, 2000)
+        )
+
+        _a = always_redraw(
+            lambda: MathTex(f"Area\\approx{a}", color=RED).set_z_index(3).shift(UP*3.5)
+        )
+        print(a)
+
+        ax = VGroup(_ax, xlabel)
+
+        self.play(Create(ax), Write(_nt), Write(_a), run_time=2)
+        self.play(Create(ax_eq), run_time=2)
+        self.play(Write(ax_ar))
+
+        self.wait(5)
+
+        self.play(n.animate.set_value(2.62), nt_tracker.animate.set_value(262), run_time=4)
+        a = r"\infty"
+        self.update_mobjects(_a)
+        self.wait(3)
+        a = "0"
+        self.play(n.animate.set_value(3.3), nt_tracker.animate.set_value(330), run_time=4)
+        a = r"\infty"
+        self.update_mobjects(_a)
+        self.wait(3)
+        a = "0"
+        self.play(n.animate.set_value(3.92), nt_tracker.animate.set_value(392), run_time=4)
+        a = r"\infty"
+        self.update_mobjects(_a)
+        self.wait(5)
+        a = "0"
+        self.play(n.animate.set_value(11), nt_tracker.animate.set_value(1100), run_time=5)
+        a = r"\infty"
+        self.update_mobjects(_a)
+        
+        self.wait(5)
+        self.play(FadeOut(ax, _a, _nt, ft, ax_eq, ax_ar))
+
+        # ===== =====
+        ft = MathTex(r"|F(\omega)|", color=YELLOW).shift(RIGHT*5).shift(UP*3)
+        self.play(Write(ft))
+        ax = NumberPlane(
+            (0, 1400, 100), (0, 400, 100),
+            12, 6,
+            tips=False,
+            background_line_style={
+                "stroke_opacity": 0.3
+            },
+            axis_config={
+                "include_ticks": True
+            },
+            x_axis_config={
+                "numbers_to_include": (-1100, -392, -330, -262, 262, 330, 392, 1100)
+            }
+        )
+        xlabel = ax.get_x_axis_label(r"\omega")
+        points = (
+            (262, 300), (330, 300), (392, 300), (1100, 300)
+        )
+        pts = VGroup()
+        for p in points:
+            pline = ax.get_line_from_axis_to_point(
+                0, ax.c2p(*p),
+                color=RED,
+                line_func=Arrow,
+                line_config={
+                'buff': 0
+                }
+            )
+            
+            pts += pline
+        
+        pline_t = MathTex(r"\infty", color=RED).next_to(pts[2], UP)
+
+        self.play(Create(ax), Write(xlabel), run_time=2)
+        self.play(
+            *(Create(p) for p in pts),
+            Write(pline_t),
+            run_time=2
+        )
+
+        self.wait(5)
+        self.play(FadeOut(pts[3]))
+        self.wait()
+        self.play(FadeOut(ax, xlabel, pline_t, pts[0:3]))
+
+        big_axes = Axes(
+            x_range=(0, 6, 1), y_range=(-4, 4, 2),
+                                y_length=4,
+            tips=False
+        )
+        ax2_t = Text("f(t)", font_size=42, color=MAROON)
+        ax2_t.move_to(DOWN*3)
+        self.ax2 = VGroup(
+            Axes(x_range=(0, 6, 1), y_range=(-4, 4, 2), y_length=4, tips=False),
+            big_axes.plot(C, color=MAROON),
+            ax2_t,
+            Line(start=np.array([-6., -2., 0.]), end=np.array([-6., 2., 0.]), color=GOLD)
+        )
+
+        self.play(Create(self.ax2[0]), run_time=2)
+        self.play(Create(self.ax2[1]), Write(self.ax2[2]))
+        self.wait(3)
+        self.play(self.ax2[3].animate.shift(RIGHT*12), run_time=2, rate_func=linear)
+        self.play(FadeOut(self.ax2[3]))
+
+        self.play(FadeOut(big_axes, ax2_t, self.ax2))
+
+
+
+### Done in high quality
+class Conclusion(Scene):
+    def construct(self):
+        self.wait(3)
+        self.play_scene()
+        self.wait(3)
+    
+    def play_scene(self):
+        t = Title("Thank you for watching!", color=RED)
+        self.play(Write(t))
+        self.wait(2)
+
+        img1 = ImageMobject("src/archimedes.png").rotate(60*DEGREES).scale(0.5).shift(LEFT*5).shift(UP)
+        img2 = ImageMobject("src/jf.png").rotate(-130*DEGREES).shift(RIGHT*3).shift(UP*4).scale(0.4).shift(DOWN*2)
+        img3 = ImageMobject("src/td_to_fd.png").rotate(85*DEGREES).scale(0.3).shift(DR*2).shift(RIGHT*3)
+        img4 = ImageMobject("src/int_by_parts.png").rotate(-69*DEGREES).shift(DL*3)
+        img5 = ImageMobject("src/mod_arg.png").rotate(6969*DEGREES).scale(0.5).shift(LEFT)
+
+        self.play(FadeIn(img1, shift=RIGHT*6), run_time=0.2)
+        self.play(FadeIn(img2, shift=LEFT*7), run_time=0.1)
+        self.play(FadeIn(img3, shift=UL*3), run_time=0.3)
+        self.play(FadeIn(img4, shift=DR*6), run_time=0.2)
+        self.play(FadeIn(img5, shift=UP*4), run_time=0.3)
+
+        self.wait(5)
+
+
