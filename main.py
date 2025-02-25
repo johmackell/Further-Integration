@@ -148,6 +148,63 @@ class SineWave(Scene):
 
         self.wait(2)
 
+class Sinewave(Scene):
+    def construct(self):
+        self.play_scene()
+    
+    def play_scene(self):
+        Title = MathTex(r"V(t) = Acos(\omega t + \phi)")
+        self.play(Write(Title))
+        self.play(Title.animate.shift(UP*3))
+
+
+        # Create the axes
+        axes = Axes(x_range=[0, 15, 1.57], y_range=[-2, 2])
+        axis_labels = axes.get_axis_labels(x_label = "t", y_label = "V")
+
+        # This is the value you use for the shift.
+        # On the last line, I use .animate to animate the change in value.
+        # Changing the 'shift' value invokes a change in 'always_redraw'
+        shift = ValueTracker(0)
+        yline = always_redraw(
+            lambda: axes.get_line_from_axis_to_point(
+                0, # 0 indicates that the line comes FROM the x-axis
+                axes.c2p(PI-shift.get_value(), -1),
+                color=RED
+            )
+        )
+        xline = always_redraw(
+            lambda: axes.get_line_from_axis_to_point(
+                1, # 1 indicates that the line come FROM the y-axis
+                axes.c2p(PI-shift.get_value(), -1),
+                line_func=Arrow,
+                line_config={'buff': 0}
+            )
+        )
+        
+        xline_label = Variable(shift.get_value(), r"\phi", color=YELLOW).next_to(xline, DOWN)
+
+        self.play(DrawBorderThenFill(axes))
+        self.play(DrawBorderThenFill(axis_labels))
+
+        # Create the waves
+        # always_redraw makes it so that it replots the line *every* frame. This is the correct way to animate a curve plotted on the axes.
+        graph = always_redraw(
+            lambda: axes.plot(lambda x: np.cos(x+shift.get_value()), color=RED)
+        )
+        self.play(Create(graph), run_time = 4)
+        self.wait(4)
+
+        graph2 = axes.plot(lambda x: 0.5*np.cos(x), color=BLUE)
+
+        self.add(graph2)
+        self.wait()
+
+        self.play(Create(yline), Create(xline), Write(xline_label))
+        self.wait()
+        self.play(shift.animate.set_value(-PI), xline_label.tracker.animate.set_value(-PI))
+
+        self.wait(5)
 
 
 ### Done in high quality
@@ -343,7 +400,7 @@ class HistoryOfIntegration(Scene):
         aa = _vax.get_area(ax_eqd, opacity=0.8)
         #self.play(ReplacementTransform(ri, a), FadeOut(t[0], scale=0.1))
 
-        aeq = MathTex(r"Area&=\lim_{\Delta t\to 0} (\sum v \ \Delta t", r") \\ &=\int v dt", color=YELLOW).shift(RIGHT).shift(UP*2.5)
+        aeq = MathTex(r"Area&=\lim_{\Delta t\to 0} (\sum v \ \Delta t", r") \\ &=\int v \ dt", color=YELLOW).shift(RIGHT).shift(UP*2.5)
         self.play(Write(aeq), FadeOut(aeqq, v[0], t[1], ri))
         self.play(Write(aa))
 
@@ -364,7 +421,7 @@ class HistoryOfIntegration(Scene):
         self.play(FadeIn(ft))
 
         self.wait(30)
-        self.play(FadeOut(ft, vax, i, iab, at, bt))
+        self.play(FadeOut(ft, vax, i, iab, at, bt, ax_eqd, a))
         
 
 
@@ -1164,6 +1221,7 @@ class ApplyingFT(Scene):
 
 
 
+### Done in high quality
 class IntegrationByParts(Scene):
     def construct(self):
         self.wait(3)
@@ -1419,64 +1477,320 @@ class IntegrationByParts(Scene):
         fw_sr = SurroundingRectangle(ttt[-1], color=YELLOW)
         self.play(Create(fw_sr))
 
+        self.wait(5)
+        fw = VGroup(ttt[-1], fw_sr)
+        self.play(FadeOut(ttt[0], ttt[5:-1], t1_sr, t1, t2, t3), fw.animate.shift(UP*6).shift(RIGHT))
+
+        ax = Axes(
+            (-12*PI, 12*PI, 2*PI), (-0.2, 1.2, 1),
+            12, 6
+        )
+        xlabel = ax.get_x_axis_label(
+            MathTex(r"\omega"),
+            direction=DOWN,
+            buff=1
+        )
+        label1 = Text("1").next_to(ax.c2p(0, 1), LEFT, buff=0.2)
+        labelp1 = MathTex(r"2\pi").next_to(ax.c2p(2*PI, 0), DOWN, buff=0.2)
+        labeln1 = MathTex(r"-2\pi").next_to(ax.c2p(-2*PI, 0), DOWN, buff=0.2)
+        sinc_eq = ax.plot(lambda x: np.sinc(x/(2*PI))**2, color=BLUE)
+
+        self.play(Create(ax), run_time=2)
+        self.play(Write(sinc_eq), Write(xlabel), Write(label1), Write(labelp1), Write(labeln1), run_time=2)
+
+        self.wait(10)
+        self.play(FadeOut(ax, xlabel, label1, labelp1, labeln1, sinc_eq, fw))
+
+        ft_pairs_img = ImageMobject("src/ft_pairs.png").shift(LEFT*2)
+        self.play(FadeIn(ft_pairs_img), run_time=3)
+
+        self.wait(10)
+        self.play(FadeOut(tri, ft_pairs_img))
 
 
-class Sinewave(Scene):
+
+### Done in high quality
+class UnitImpulse(Scene):
     def construct(self):
+        self.wait(3)
         self.play_scene()
+        self.wait(3)
     
     def play_scene(self):
-        Title = MathTex(r"V(t) = Acos(\omega t + \phi)")
-        self.play(Write(Title))
-        self.play(Title.animate.shift(UP*3))
+        t = Title().shift(UP*3)
+        mt = MathTex(r"\textrm{The Unit Impulse} \ - \ \delta (t)", color=RED).next_to(t, UP)
+        t = VGroup(t, mt)
 
-
-        # Create the axes
-        axes = Axes(x_range=[0, 15, 1.57], y_range=[-2, 2])
-        axis_labels = axes.get_axis_labels(x_label = "t", y_label = "V")
-
-        # This is the value you use for the shift.
-        # On the last line, I use .animate to animate the change in value.
-        # Changing the 'shift' value invokes a change in 'always_redraw'
-        shift = ValueTracker(0)
-        yline = always_redraw(
-            lambda: axes.get_line_from_axis_to_point(
-                0, # 0 indicates that the line comes FROM the x-axis
-                axes.c2p(PI-shift.get_value(), -1),
-                color=RED
-            )
-        )
-        xline = always_redraw(
-            lambda: axes.get_line_from_axis_to_point(
-                1, # 1 indicates that the line come FROM the y-axis
-                axes.c2p(PI-shift.get_value(), -1),
-                line_func=Arrow,
-                line_config={'buff': 0}
-            )
-        )
-        
-        xline_label = Variable(shift.get_value(), r"\phi", color=YELLOW).next_to(xline, DOWN)
-
-        self.play(DrawBorderThenFill(axes))
-        self.play(DrawBorderThenFill(axis_labels))
-
-        # Create the waves
-        # always_redraw makes it so that it replots the line *every* frame. This is the correct way to animate a curve plotted on the axes.
-        graph = always_redraw(
-            lambda: axes.plot(lambda x: np.cos(x+shift.get_value()), color=RED)
-        )
-        self.play(Create(graph), run_time = 4)
-        self.wait(4)
-
-        graph2 = axes.plot(lambda x: 0.5*np.cos(x), color=BLUE)
-
-        self.add(graph2)
-        self.wait()
-
-        self.play(Create(yline), Create(xline), Write(xline_label))
-        self.wait()
-        self.play(shift.animate.set_value(-PI), xline_label.tracker.animate.set_value(-PI))
+        self.play(Write(t))
 
         self.wait(5)
 
+        ft = MathTex(
+            r"F(\omega)&=\int_{-\infty}^{\infty} f(t)",
+            r"e^{-i\omega t}",
+            r"\ dt",
+            color=YELLOW
+        ).shift(UP)
+        sc = MathTex(
+            r"\cos{(\omega t)}-i\sin{(\omega t)}",
+            color=RED
+        )
+        e = ft[1].copy()
+        self.play(Write(ft), run_time=2)
+        sr = SurroundingRectangle(ft[1], RED)
+        self.play(Create(sr))
+        self.play(ReplacementTransform(e, sc))
 
+        self.wait(5)
+        self.play(FadeOut(t, ft, sc, sr, e, shift=UP*3))
+        
+        _ddf = MathTex(
+            r"\int_{a}^{b} \delta(\omega) \ d\omega &=\left\{ \begin{array}{rcl} 1 & \textrm{for} & a<0<b \\ 0 & & \textrm{otherwise} \end{array} \right.",
+            color=BLUE
+        )
+        ddf_sr = SurroundingRectangle(_ddf, YELLOW)
+        self.play(Write(_ddf), run_time=4)
+        self.wait()
+        self.play(Create(ddf_sr))
+        ddf = VGroup(_ddf, ddf_sr)
+
+        self.wait(5)
+        self.play(ddf.animate.scale(0.7).shift(UP*3))
+
+        ldt = NumberPlane(
+            (-1, 1, 0.5), (0, 1.2, 1),
+            5, 4,
+            background_line_style={
+                "stroke_opacity": 0.3
+            },
+            x_axis_config={
+                "include_numbers": True
+            }
+        ).shift(DOWN*0.5).shift(LEFT*3.5)
+        lylabel = ldt.get_y_axis_label(
+            MathTex(r"\delta(\omega)", color=YELLOW).rotate(90*DEGREES),
+            edge=LEFT,
+            direction=LEFT*1.5,
+        ).shift(LEFT*2)
+        lxlabel = ldt.get_x_axis_label(
+            MathTex(r"\textrm{Frequency} \ (\omega)", color=YELLOW),
+            edge=DOWN,
+            direction=DOWN*1.2
+        )
+        ldd_line = ldt.get_line_from_axis_to_point(
+            0, ldt.c2p(0, 1),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        ldd_line_t = MathTex(r"\infty", color=RED).next_to(ldd_line, UP)
+        lylabel1 = Tex("1").next_to(ldd_line, LEFT).shift(UP*1.7)
+
+
+        rdt = NumberPlane(
+            (-0.5, 1.5, 0.5), (0, 1.2, 1),
+            5, 4,
+            background_line_style={
+                "stroke_opacity": 0.3
+            },
+            x_axis_config={
+                "include_numbers": True
+            }
+        ).shift(DOWN*0.5).shift(RIGHT*4)
+        rylabel = rdt.get_y_axis_label(
+            MathTex(r"A\cdot \delta(\omega-0.5)", color=YELLOW).rotate(90*DEGREES),
+            edge=LEFT,
+            direction=LEFT*0.1,
+        ).shift(LEFT*2)
+        rxlabel = rdt.get_x_axis_label(
+            MathTex(r"\textrm{Frequency} \ (\omega)", color=YELLOW),
+            edge=DOWN,
+            direction=DOWN*1.2
+        )
+        rdd_line = rdt.get_line_from_axis_to_point(
+            0, rdt.c2p(0.5, 1),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        rdd_line_t = MathTex(r"\infty", color=RED).next_to(rdd_line, UP)
+        rylabel1 = MathTex("A").next_to(rdd_line, LEFT*4.5).shift(UP*1.7)
+        
+        
+        self.play(
+            Create(ldt), Write(lylabel), Write(lxlabel),
+            Create(rdt), Write(rylabel), Write(rxlabel),
+            run_time=2
+        )
+        self.play(
+            Create(ldd_line), Write(ldd_line_t),
+            Create(rdd_line), Write(rdd_line_t),
+            Write(lylabel1), Write(rylabel1),
+            run_time=2
+        )
+
+        self.wait()
+        note = MathTex(r"\textrm{*Values shown on y-axis are area.} \\ \textrm{Height}=\infty \quad \textrm{for both lines.}", color=YELLOW).scale(0.7).shift(RIGHT*3).shift(UP*3)
+        note_sr = SurroundingRectangle(note, RED)
+        note = VGroup(note, note_sr)
+
+        self.play(ddf.animate.shift(LEFT*3.5), FadeIn(note), run_time=2)
+
+        self.wait(10)
+        self.play(FadeOut(note, ldt, lylabel, lylabel1, lxlabel, ldd_line, ldd_line_t, rdt, rylabel, rylabel1, rdd_line, rdd_line_t, ddf, rxlabel))
+
+        ft = MathTex(r"f(t)=\cos{(5\pi t)} \quad \Longleftrightarrow \quad F(\pm5\pi)=\infty", color=YELLOW).scale(0.7)
+        self.play(Write(ft))
+        self.wait(5)
+        self.play(ft.animate.shift(UP*3))
+
+        fw = MathTex(
+            r"F(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)} e^{-i\omega t} \ dt \\",
+            r"\textrm{Using}& \quad \cos{x}=\frac{e^{i\omega}+e^{-ix}}{2} \ ; \\",
+            r"F(\omega)&=\int_{-\infty}^{\infty}\left[ \frac{e^{i5\pi t}+e^{-i5\pi t}}{2}\right] e^{-i\omega t} \ dt \\",
+            r"&=\int_{-\infty}^{\infty} \frac{1}{2} (e^{i5\pi t}+e^{-i5\pi t})e^{-i\omega t} \ dt \\",
+            r"&=\frac{1}{2}\cdot \int_{-\infty}^{\infty}(e^{i5\pi t}\cdot e^{-i\omega t}+e^{-i5\pi t}\cdot e^{-i\omega t}) \ dt \\",
+            r"&=\frac{1}{2}\left[ \int_{-\infty}^{\infty}e^{i5\pi t}\cdot e^{-i\omega t} \ dt+\int_{-\infty}^{\infty} e^{-i5\pi t}\cdot e^{-i\omega t} \ dt \right] \\ \\",
+            r"\textrm{Using}& \quad e^{i\omega t} \quad \underleftrightarrow{ \ \ F \ \ } \quad 2\pi \delta(\omega - \omega_{0}) \ ; \\",
+            r"F(\omega)&=\frac{1}{2}\left[ 2\pi \delta(\omega-5\pi)+2\pi\delta(\omega+5\pi) \right] \\ \\",
+            r"&=\pi\left[\delta(\omega-5\pi)+\delta(\omega+5\pi)\right]"
+        ).scale(0.7).shift(LEFT*2.5).shift(DOWN*2)
+        fw[1].set_color(BLUE)
+        fw[6].set_color(BLUE)
+
+        for i in range(0, 6):
+            self.play(Write(fw[i]), run_time=3)
+            self.wait(0.5)
+        self.wait(3)
+        self.play(FadeOut(fw[1:5]), fw[5].animate.shift(UP*3.5))
+        fw[6:].shift(UP*3.5)
+        for i in range(6, 9):
+            self.play(Write(fw[i]), run_time=3)
+            self.wait(0.5)
+        
+        note = Tex(r"*The $F$ over the double arrow \\ denotes a Fourier Transform pair.", color=YELLOW).scale(0.7).shift(DOWN).shift(RIGHT*3)
+        note_sr = SurroundingRectangle(note, RED)
+        note = VGroup(note, note_sr)
+
+        self.play(FadeIn(note))
+
+        self.wait(5)
+        self.play(FadeOut(fw[0], fw[5:-1], ft, note))
+        ftr = MathTex(r"F(\omega)=\pi\left[\delta(\omega-5\pi)+\delta(\omega+5\pi)\right]", color=YELLOW).scale(0.7).shift(UP*3.5)
+        self.play(ReplacementTransform(fw[-1], ftr))
+
+        ax = NumberPlane(
+            (-5, 5, 1), (-1, 4, 1),
+            16, 8,
+            tips=False,
+            background_line_style={
+                "stroke_opacity": 0.3
+            },
+            axis_config={
+                "include_ticks": True
+            }
+        )
+        xlabel = ax.get_x_axis_label(r"\omega")
+        ylabel_pi = MathTex(r"\pi").next_to(ax.c2p(0, 3), LEFT)
+        pline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(2, 3),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        pline_t = MathTex(r"\infty", color=RED).next_to(pline, UP)
+        pline_l = MathTex(r"5\pi").next_to(pline, DOWN*1.3)
+        nline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(-2, 3),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        nline_t = pline_t.copy().next_to(nline, UP)
+        nline_l = MathTex(r"-5\pi").next_to(nline, DOWN*1.3)
+
+        self.play(Create(ax), Write(xlabel), Write(ylabel_pi), run_time=2)
+        self.play(
+            Create(pline), Create(nline),
+            Write(pline_t), Write(nline_t),
+            Write(pline_l), Write(nline_l),
+            run_time=2
+        )
+
+        self.wait(10)
+        self.play(FadeOut(ftr, ax, xlabel, ylabel_pi, pline, pline_t, pline_l, nline, nline_t, nline_l))
+
+        # ===== =====
+        ftr1 = MathTex(r"f(t)=\sin{(5\pi t)}", color=BLUE).scale(0.7).shift(UP*3.5).shift(LEFT*5)
+        ftr2 = MathTex(r"F(\omega)=i\pi\left[\delta(\omega+5\pi)-\delta(\omega-5\pi)\right]", color=YELLOW).scale(0.7).shift(UP*3.5).shift(RIGHT*3.5)
+        self.play(FadeIn(ftr1, ftr2, shift=UP*3), run_time=2)
+
+        ax = NumberPlane(
+            (-7, 7, 1), (-4, 4, 1),
+            16, 8,
+            tips=False,
+            background_line_style={
+                "stroke_opacity": 0.3
+            },
+            axis_config={
+                "include_ticks": True
+            }
+        )
+        xlabel = ax.get_x_axis_label(r"\omega")
+        pline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(2, -3),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        pline_t = MathTex(r"-\infty", color=RED).next_to(pline, DOWN)
+        pline_l = MathTex(r"5\pi").next_to(pline, UP*1.3)
+        nline = ax.get_line_from_axis_to_point(
+            0, ax.c2p(-2, 3),
+            color=RED,
+            line_func=Arrow,
+            line_config={
+                'buff': 0
+            }
+        )
+        nline_t = MathTex(r"\infty", color=RED).next_to(nline, UP)
+        nline_l = MathTex(r"-5\pi").next_to(nline, DOWN*1.3)
+
+        ylabel_ppi = MathTex(r"\pi").next_to(ax.c2p(0, 3), LEFT)
+        ylabel_npi = MathTex(r"-\pi").next_to(ax.c2p(0, -3), LEFT)
+
+        self.play(Create(ax), Write(xlabel), Write(ylabel_ppi), Write(ylabel_npi), run_time=2)
+        self.play(
+            Create(pline), Create(nline),
+            Write(pline_t), Write(nline_t),
+            Write(pline_l), Write(nline_l),
+            run_time=2
+        )
+
+        self.wait(15)
+        self.play(FadeOut(ftr1, ftr2, ax, xlabel, pline, pline_t, pline_l, nline, nline_t, nline_l, ylabel_ppi, ylabel_npi))
+
+
+
+
+class FilteringSound(Scene):
+    def construct(self):
+        self.wait(3)
+        self.play_scene()
+        self.wait(3)
+
+    def play_scene(self):
+        t = Title("Filtering Sound", color=RED)
+        self.play(Write(t), run_time=2)
+
+        #

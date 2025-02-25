@@ -1,0 +1,9 @@
+\documentclass[preview]{standalone}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\begin{align*}
+F(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)} e^{-i\omega t} \ dt \\ \textrm{Using}& \quad \cos{x}=\frac{e^{i\omega}+e^{-ix}}{2} \ ; \\ F(\omega)&=\int_{-\infty}^{\infty}\left[ \frac{e^{i5\pi t}+e^{-i5\pi t}}{2}\right] e^{-i\omega t} \ dt \\ &=\int_{-\infty}^{\infty} \frac{1}{2} (e^{i5\pi t}+e^{-i5\pi t})e^{-i\omega t} \ dt \\ &=\frac{1}{2}\cdot \int_{-\infty}^{\infty}(e^{i5\pi t}\cdot e^{-i\omega t}+e^{-i5\pi t}\cdot e^{-i\omega t}) \ dt \\ &=\frac{1}{2}\left[ \int_{-\infty}^{\infty}e^{i5\pi t}\cdot e^{-i\omega t} \ dt+e^{-i5\pi t}\cdot e^{-i\omega t} \ dt \right] \\ \textrm{Using}& \quad e^{i\omega t} \quad \underleftrightarrow{ \ \ F \ \ } \quad 2\pi \delta(\omega - \omega_{0}) \ ; \\ F(\omega)&=\frac{1}{2}\left[ 2\pi \delta(\omega-5\pi)+2\pi\delta(\omega+5\pi) \right] \\ &=\pi\left[\delta(\omega-5\pi)+\delta(\omega+5\pi)\right]
+\end{align*}
+\end{document}
