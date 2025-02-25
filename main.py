@@ -374,13 +374,15 @@ class HistoryOfIntegration(Scene):
         self.wait(2)
         self.play(Write(t), t[0].animate.scale(0.6))
 
+        self.wait(8)
+
         aeqq = MathTex(r"Area\approx\sum", r" \ ", r" \ ", color=YELLOW).shift(UP).shift(RIGHT)
         self.wait(2)
         self.play(Write(aeqq))
         self.play(FadeOut(v[1]), v[0].animate.move_to(aeqq[1]).shift(RIGHT*2.5).shift(UP), run_time=0.5)
         self.play(FadeOut(t[0]), t[1].animate.move_to(aeqq[2]).shift(RIGHT*3).shift(UP), run_time=0.5)
 
-        self.wait(5)
+        self.wait(30)
         rn = _vax.get_riemann_rectangles(
             ax_eqd,
             x_range=(0, 6),
@@ -398,6 +400,8 @@ class HistoryOfIntegration(Scene):
         )
         self.play(ReplacementTransform(rn, ri), run_time=2)
 
+        self.wait(5)
+
         a = _vax.get_area(ax_eqd, (1, 5), opacity=0.8)
         self.wait(3)
         aa = _vax.get_area(ax_eqd, opacity=0.8)
@@ -407,7 +411,7 @@ class HistoryOfIntegration(Scene):
         self.play(Write(aeq), FadeOut(aeqq, v[0], t[1], ri))
         self.play(Write(aa))
 
-        self.wait(3)
+        self.wait(15)
         self.play(FadeOut(aeq, aa))
 
         i = MathTex(r"\int f(x) \ dx", color=YELLOW).shift(LEFT*3).shift(UP*2.5)
@@ -935,7 +939,7 @@ class ApplyingFT(Scene):
         self.wait(5)
         self.play(FadeOut(ax, _a, _nt, _rfb, ax_eq, ax_ar, _nt_pi, _ntb, _rft, fft[3]))
 
-        _fi = MathTex(r"F_{r}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt", color=YELLOW).scale(0.7)
+        _fi = MathTex(r"F_{i}(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)}\sin{(\omega t)} dt", color=YELLOW).scale(0.7)
         fib = SurroundingRectangle(_fi, color=RED)
         self.play(Write(_fi), Create(fib))
         fi = VGroup(_fi, fib)
@@ -1246,7 +1250,7 @@ class IntegrationByParts(Scene):
         liate_img = ImageMobject("src/liate_rule.png").shift(LEFT*3)
         self.play(FadeIn(liate_img, shift=RIGHT*2))
 
-        self.wait(5)
+        self.wait(30)
         self.play(FadeOut(t, ibp_img, liate_img))
 
         tri = MathTex(
