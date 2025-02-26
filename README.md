@@ -3,14 +3,14 @@
 
  Exploring the Fourier Transform
 
- ### $` F(\nu)=\int_{-\infty}^{\infty}f(t)e^{-2\pi it\nu} dt `$
+ ### $` F(\omega)=\int_{-\infty}^{\infty}f(t)e^{-i\omega t} dt `$
 
 
-Latest video can be downloaded from here:
-https://github.com/johmackell/Further-Integration/blob/main/fourier_transform.mp4
+Latest video can be found here:
+https://drive.google.com/file/d/1gw69FxvJQX5b6PbAREX9zEIKjrIOsFJm/view
 
 
-*** Note, below is an outdated gif preview. The most recently rendered animation can be found at:
+*** Note, below is an outdated gif preview. The most recently rendered animations can be found at:
 https://github.com/johmackell/Further-Integration/tree/main/media/videos/main
         
 ![Alt Text](https://github.com/johmackell/Further-Integration/blob/main/src/integral.gif)
