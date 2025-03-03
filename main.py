@@ -643,8 +643,7 @@ class IntroducingFT(Scene):
         ft_image = ImageMobject("src/td_to_fd.png")
         self.play(FadeIn(ft_image))
         self.wait(8)
-        self.remove(ft_image)
-        self.play(FadeOut(self.tt, self.ft, self.tar, self.vg1, self.vg2, self.axs2l))
+        self.play(FadeOut(ft_image, self.tt, self.ft, self.tar, self.vg1, self.vg2, self.axs2l))
 
         jf_image = ImageMobject("src/jf.png").scale(0.5)
         self.play(FadeIn(jf_image))
@@ -721,8 +720,8 @@ class IntroducingFT(Scene):
         self.play(Create(ftr1))
 
         f2 = MathTex(
-            r"F(\omega)&=\int_{-\infty}^{\infty}f(t)[\cos({\omega})-i\sin({\omega t})] \ dt \\",
-            r"F(\omega)&=\int_{-\infty}^{\infty}f(t)\cos({\omega}) \ dt-i\int_{-\infty}^{\infty}f(t)\sin({\omega t}) \ dt"
+            r"F(\omega)&=\int_{-\infty}^{\infty}f(t)[\cos({\omega t})-i\sin({\omega t})] \ dt \\",
+            r"F(\omega)&=\int_{-\infty}^{\infty}f(t)\cos({\omega t}) \ dt-i\int_{-\infty}^{\infty}f(t)\sin({\omega t}) \ dt"
         )
         self.play(Write(f2[0]), run_time=3)
         self.play(Write(f2[1]), run_time=3)
@@ -747,7 +746,7 @@ class IntroducingFT(Scene):
         yl = Line(arg_dia.c2p(5, 0), arg_dia.c2p(5, 3))
         ylt = MathTex(r"\int_{-\infty}^{\infty}f(t)\sin({\omega t})", color=YELLOW).next_to(yl, RIGHT, buff=0.3)
         xl = Line(arg_dia.c2p(0, 0), arg_dia.c2p(5, 3))
-        xlt = MathTex(r"\int_{-\infty}^{\infty}f(t)\cos({\omega})", color=YELLOW).next_to(yl, DOWN, buff=0.3).shift(LEFT*2.2)
+        xlt = MathTex(r"\int_{-\infty}^{\infty}f(t)\cos({\omega t})", color=YELLOW).next_to(yl, DOWN, buff=0.3).shift(LEFT*2.2)
         theta = MathTex(r"\theta", color=BLUE).shift(DL*1.1).shift(LEFT*0.7)
         fmag = MathTex(r"|f(\omega)|", color=YELLOW).next_to(xl, UP, buff=0.3).shift(DOWN)
         
@@ -763,7 +762,7 @@ class IntroducingFT(Scene):
 
         self.play(FadeOut(arg_dia, imgsr, mod_arg_image, theta, fmag, yl, ylt, xl, xlt, labels, self.t2, ef, efr))
 
-        self.wait()
+        self.wait(10)
 
         # ===== =====   ===== =====
     
@@ -789,6 +788,8 @@ class IntroducingFT(Scene):
         self.play(FadeIn(eulers, shift=UP))
         circ = VGroup(unit_circle, eulers)
 
+        self.wait(15)
+
         self.play(circ.animate.shift(LEFT*5).shift(UP*2))
         self.wait(5)
 
@@ -809,9 +810,11 @@ class IntroducingFT(Scene):
         cos_gr = cos_ax.plot(lambda x: np.cos(x), color=YELLOW)
 
 
-        self.play(Create(sin_ax), Create(cos_ax))
+        self.play(Create(sin_ax), Create(cos_ax), run_time=2)
         self.play(n.animate.set_value(360), Create(sin_gr), Create(cos_gr), rate_func=linear, run_time=10)
-        self.wait(3)
+
+        self.wait(15)
+
         self.play(FadeOut(sin_gr, cos_gr))
         self.play(n.animate.set_value(0), Create(sin_ogr), Create(cos_gr), rate_func=linear, run_time=10)
 
@@ -1027,7 +1030,7 @@ class ApplyingFT(Scene):
             run_time=2
         )
 
-        self.wait(10)
+        self.wait(30)
         self.play(FadeOut(ftr, ax, xlabel, pline, pline_t, pline_l, nline, nline_t, nline_l))
 
         fft = MathTex(
@@ -1081,6 +1084,7 @@ class ApplyingFT(Scene):
         )
         self.play(Write(fft[0:2]), run_time=3)
         self.play(Write(fft[2]), run_time=2)
+        self.wait(10)
         self.play(FadeOut(ft, fft[0:2]), fft[2].animate.set_color(YELLOW), fft[2].animate.shift(UP*5).scale(0.7).shift(LEFT))
 
         # ===== =====
@@ -1118,7 +1122,7 @@ class ApplyingFT(Scene):
         self.play(n.animate.set_value(2*PI), nt_tracker.animate.set_value(2*PI), run_time=2)
         self.wait(2)
         self.play(n.animate.set_value(5*PI), nt_tracker.animate.set_value(5*PI), run_time=4)
-        self.wait(5)
+        self.wait(30)
         self.play(FadeOut(ax, _a, _nt, ax_eq, ax_ar, fft[2]))
         # ===== =====
 
@@ -1244,13 +1248,13 @@ class IntegrationByParts(Scene):
         ibp_img = ImageMobject("src/int_by_parts.png").scale(1.5).shift(RIGHT)
         self.play(FadeIn(ibp_img))
 
-        self.wait(5)
+        self.wait(20)
         self.play(ibp_img.animate.shift(RIGHT*3))
 
         liate_img = ImageMobject("src/liate_rule.png").shift(LEFT*3)
         self.play(FadeIn(liate_img, shift=RIGHT*2))
 
-        self.wait(30)
+        self.wait(40)
         self.play(FadeOut(t, ibp_img, liate_img))
 
         tri = MathTex(
@@ -1354,7 +1358,7 @@ class IntegrationByParts(Scene):
         _t23 = MathTex(
             r"T_{2,3}&=",
             r"\textrm{Let} \quad \begin{array}{rl}u=t & v'=e^{-i\omega t} \\ u'=1 & v=\frac{-1}{i\omega}\cdot e^{-i\omega t} \end{array} \\ \\ ",
-            r"T_{2,3}&=t\cdot \frac{-1}{i\omega}\cdot e^{-i\omega t}-\int 1\cdot \frac{-1}{i\omega t}\cdot e^{-i\omega t} \ dt \\",
+            r"T_{2,3}&=t\cdot \frac{-1}{i\omega}\cdot e^{-i\omega t}-\int 1\cdot \frac{-1}{i\omega}\cdot e^{-i\omega t} \ dt \\",
             r"&=\frac{ite^{-i\omega t}}{\omega}+\frac{1}{i\omega}\int e^{-i\omega t} \ dt \\",
             r"&=\frac{ite^{-i\omega t}}{\omega}+\frac{1}{i\omega}\left(\frac{-1}{i\omega}\cdot e^{-i\omega t}\right) \\",
             r"&=\frac{ite^{-i\omega t}}{\omega}-\frac{1}{i^{2}\omega^{2}}\cdot e^{-i\omega t} \\",
@@ -1365,7 +1369,9 @@ class IntegrationByParts(Scene):
         _t23[0].set_color(YELLOW).next_to(fpe[-1], LEFT)
         _t23[1].set_color(BLUE).shift(DL*0.3).shift(LEFT)
         self.play(Write(_t23[0]))
-        for i in range(1, 9):
+        self.play(Write(_t23[1]), run_time=3)
+        self.wait(20)
+        for i in range(2, 9):
             self.play(Write(_t23[i]), run_time=3)
             self.wait()
         self.play(Write(_t23[9], run_time=3))
@@ -1511,7 +1517,7 @@ class IntegrationByParts(Scene):
         ft_pairs_img = ImageMobject("src/ft_pairs.png").shift(LEFT*2)
         self.play(FadeIn(ft_pairs_img), run_time=3)
 
-        self.wait(10)
+        self.wait(40)
         self.play(FadeOut(tri, ft_pairs_img))
 
 
@@ -1548,7 +1554,7 @@ class UnitImpulse(Scene):
         self.play(Create(sr))
         self.play(ReplacementTransform(e, sc))
 
-        self.wait(5)
+        self.wait(30)
         self.play(FadeOut(t, ft, sc, sr, e, shift=UP*3))
         
         _ddf = MathTex(
@@ -1647,7 +1653,7 @@ class UnitImpulse(Scene):
 
         self.play(ddf.animate.shift(LEFT*3.5), FadeIn(note), run_time=2)
 
-        self.wait(10)
+        self.wait(40)
         self.play(FadeOut(note, ldt, lylabel, lylabel1, lxlabel, ldd_line, ldd_line_t, rdt, rylabel, rylabel1, rdd_line, rdd_line_t, ddf, rxlabel))
 
         ft = MathTex(r"f(t)=\cos{(5\pi t)} \quad \Longleftrightarrow \quad F(\pm5\pi)=\infty", color=YELLOW).scale(0.7)
@@ -1657,12 +1663,12 @@ class UnitImpulse(Scene):
 
         fw = MathTex(
             r"F(\omega)&=\int_{-\infty}^{\infty} \cos{(5\pi t)} e^{-i\omega t} \ dt \\",
-            r"\textrm{Using}& \quad \cos{x}=\frac{e^{i\omega}+e^{-ix}}{2} \ ; \\",
+            r"\textrm{Using}& \quad \cos{x}=\frac{e^{ix}+e^{-ix}}{2} \ ; \\",
             r"F(\omega)&=\int_{-\infty}^{\infty}\left[ \frac{e^{i5\pi t}+e^{-i5\pi t}}{2}\right] e^{-i\omega t} \ dt \\",
             r"&=\int_{-\infty}^{\infty} \frac{1}{2} (e^{i5\pi t}+e^{-i5\pi t})e^{-i\omega t} \ dt \\",
             r"&=\frac{1}{2}\cdot \int_{-\infty}^{\infty}(e^{i5\pi t}\cdot e^{-i\omega t}+e^{-i5\pi t}\cdot e^{-i\omega t}) \ dt \\",
             r"&=\frac{1}{2}\left[ \int_{-\infty}^{\infty}e^{i5\pi t}\cdot e^{-i\omega t} \ dt+\int_{-\infty}^{\infty} e^{-i5\pi t}\cdot e^{-i\omega t} \ dt \right] \\ \\",
-            r"\textrm{Using}& \quad e^{i\omega t} \quad \underleftrightarrow{ \ \ F \ \ } \quad 2\pi \delta(\omega - \omega_{0}) \ ; \\",
+            r"\textrm{Using}& \quad e^{i\omega_{0} t} \quad \underleftrightarrow{ \ \ F \ \ } \quad 2\pi \delta(\omega - \omega_{0}) \ ; \\",
             r"F(\omega)&=\frac{1}{2}\left[ 2\pi \delta(\omega-5\pi)+2\pi\delta(\omega+5\pi) \right] \\ \\",
             r"&=\pi\left[\delta(\omega-5\pi)+\delta(\omega+5\pi)\right]"
         ).scale(0.7).shift(LEFT*2.5).shift(DOWN*2)
@@ -1675,7 +1681,9 @@ class UnitImpulse(Scene):
         self.wait(3)
         self.play(FadeOut(fw[1:5]), fw[5].animate.shift(UP*3.5))
         fw[6:].shift(UP*3.5)
-        for i in range(6, 9):
+        self.play(Write(fw[6]), run_time=3)
+        self.wait(20)
+        for i in range(7, 9):
             self.play(Write(fw[i]), run_time=3)
             self.wait(0.5)
         
@@ -1967,7 +1975,7 @@ class FilteringSound(Scene):
         self.wait(5)
         self.play(FadeOut(pts[3]))
         self.wait()
-        self.play(FadeOut(ax, xlabel, pline_t, pts[0:3]))
+        self.play(FadeOut(ax, xlabel, pline_t, pts[0:3], ft))
 
         big_axes = Axes(
             x_range=(0, 6, 1), y_range=(-4, 4, 2),
