@@ -7,7 +7,7 @@
 
 
 Latest video can be found here:
-https://drive.google.com/file/d/1gw69FxvJQX5b6PbAREX9zEIKjrIOsFJm/view
+https://drive.google.com/file/d/1gqYhEw5lj1QsP7obc9O530A8Cti3S1pF/view?usp=sharing
 
 
 *** Note, below is an outdated gif preview. The most recently rendered animations can be found at:
