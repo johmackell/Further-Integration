@@ -777,10 +777,10 @@ class IntroducingFT(Scene):
             lambda: Line(unit_circle.get_center(), point)
         )
         yline = always_redraw(
-            lambda: Line((point.get_x(), unit_circle.get_y(), 0), point, color=YELLOW)
+            lambda: Line((point.get_x(), unit_circle.get_y(), 0), point, color=RED)
         )
         xline = always_redraw(
-            lambda: Line(unit_circle.get_center(), (point.get_x(), unit_circle.get_y(), 0), color=RED)
+            lambda: Line(unit_circle.get_center(), (point.get_x(), unit_circle.get_y(), 0), color=YELLOW)
         )
 
         self.play(Create(unit_circle), Create(point), Create(hline), Create(yline), Create(xline))
